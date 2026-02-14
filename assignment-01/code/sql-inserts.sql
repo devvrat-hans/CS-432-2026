@@ -70,25 +70,30 @@ INSERT INTO UploadSession (sessionID, memberID, deviceID, policyID, uploadTimest
 -- 1e. FileMetadata
 INSERT INTO FileMetadata (fileID, sessionID, fileName, fileSize, mimeType, checksum, storagePath) VALUES
 (1,  1,  'lecture_notes_dbms.pdf',       2048576,  'application/pdf',       'a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2', '/tmp/blinddrop/sess_1/lecture_notes_dbms.pdf'),
-(2,  2,  'assignment_solution.docx',     1536000,  'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3', '/tmp/blinddrop/sess_2/assignment_solution.docx'),
-(3,  3,  'project_report.pdf',           3145728,  'application/pdf',       'c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4', '/tmp/blinddrop/sess_3/project_report.pdf'),
-(4,  4,  'resume_sneha.pdf',             512000,   'application/pdf',       'd4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5', '/tmp/blinddrop/sess_4/resume_sneha.pdf'),
-(5,  5,  'presentation_ml.pptx',         5242880,  'application/vnd.openxmlformats-officedocument.presentationml.presentation', 'e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6', '/tmp/blinddrop/sess_5/presentation_ml.pptx'),
-(6,  6,  'code_snippet.py',              4096,     'text/x-python',         'f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1', '/tmp/blinddrop/sess_6/code_snippet.py'),
-(7,  7,  'dataset_analytics.csv',        8388608,  'text/csv',              'a2b3c4d5e6f1a2b3c4d5e6f1a2b3c4d5e6f1a2b3c4d5e6f1a2b3c4d5e6f1a2b3', '/tmp/blinddrop/sess_7/dataset_analytics.csv'),
-(8,  8,  'photo_id_card.jpg',            1048576,  'image/jpeg',            'b3c4d5e6f1a2b3c4d5e6f1a2b3c4d5e6f1a2b3c4d5e6f1a2b3c4d5e6f1a2b3c4', '/tmp/blinddrop/sess_8/photo_id_card.jpg'),
-(9,  9,  'lab_manual.pdf',               2621440,  'application/pdf',       'c4d5e6f1a2b3c4d5e6f1a2b3c4d5e6f1a2b3c4d5e6f1a2b3c4d5e6f1a2b3c4d5', '/tmp/blinddrop/sess_9/lab_manual.pdf'),
-(10, 10, 'spreadsheet_budget.xlsx',      768000,   'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'd5e6f1a2b3c4d5e6f1a2b3c4d5e6f1a2b3c4d5e6f1a2b3c4d5e6f1a2b3c4d5e6', '/tmp/blinddrop/sess_10/spreadsheet_budget.xlsx'),
-(11, 11, 'thesis_draft.pdf',             4194304,  'application/pdf',       'e6f1a2b3c4d5e6f1a2b3c4d5e6f1a2b3c4d5e6f1a2b3c4d5e6f1a2b3c4d5e6f1', '/tmp/blinddrop/sess_11/thesis_draft.pdf'),
-(12, 12, 'certificate_scan.png',         2097152,  'image/png',             'f1a2b3c4d5e6f1a2b3c4d5e6f1a2b3c4d5e6f1a2b3c4d5e6f1a2b3c4d5e6f1a2', '/tmp/blinddrop/sess_12/certificate_scan.png'),
-(13, 13, 'research_paper.pdf',           3670016,  'application/pdf',       'a3b4c5d6e7f2a3b4c5d6e7f2a3b4c5d6e7f2a3b4c5d6e7f2a3b4c5d6e7f2a3b4', '/tmp/blinddrop/sess_13/research_paper.pdf'),
-(14, 14, 'notes_algebra.pdf',            1024000,  'application/pdf',       'b4c5d6e7f2a3b4c5d6e7f2a3b4c5d6e7f2a3b4c5d6e7f2a3b4c5d6e7f2a3b4c5', '/tmp/blinddrop/sess_14/notes_algebra.pdf'),
-(15, 15, 'video_clip.mp4',               10485760, 'video/mp4',             'c5d6e7f2a3b4c5d6e7f2a3b4c5d6e7f2a3b4c5d6e7f2a3b4c5d6e7f2a3b4c5d6', '/tmp/blinddrop/sess_15/video_clip.mp4'),
-(16, 16, 'form_filled.pdf',              256000,   'application/pdf',       'd6e7f2a3b4c5d6e7f2a3b4c5d6e7f2a3b4c5d6e7f2a3b4c5d6e7f2a3b4c5d6e7', '/tmp/blinddrop/sess_16/form_filled.pdf'),
-(17, 17, 'slides_networking.pptx',       6291456,  'application/vnd.openxmlformats-officedocument.presentationml.presentation', 'e7f2a3b4c5d6e7f2a3b4c5d6e7f2a3b4c5d6e7f2a3b4c5d6e7f2a3b4c5d6e7f2', '/tmp/blinddrop/sess_17/slides_networking.pptx'),
-(18, 18, 'marksheet_scan.jpg',           1572864,  'image/jpeg',            'f2a3b4c5d6e7f2a3b4c5d6e7f2a3b4c5d6e7f2a3b4c5d6e7f2a3b4c5d6e7f2a3', '/tmp/blinddrop/sess_18/marksheet_scan.jpg'),
-(19, 19, 'ebook_chapter.pdf',            2359296,  'application/pdf',       'a4b5c6d7e8f3a4b5c6d7e8f3a4b5c6d7e8f3a4b5c6d7e8f3a4b5c6d7e8f3a4b5', '/tmp/blinddrop/sess_19/ebook_chapter.pdf'),
-(20, 20, 'invoice_receipt.pdf',          384000,   'application/pdf',       'b5c6d7e8f3a4b5c6d7e8f3a4b5c6d7e8f3a4b5c6d7e8f3a4b5c6d7e8f3a4b5c6', '/tmp/blinddrop/sess_20/invoice_receipt.pdf');
+(2,  1,  'lecture_slides_dbms.pptx',     3145728,  'application/vnd.openxmlformats-officedocument.presentationml.presentation', 'a1c2d3e4f5a6a1c2d3e4f5a6a1c2d3e4f5a6a1c2d3e4f5a6a1c2d3e4f5a6a1c2', '/tmp/blinddrop/sess_1/lecture_slides_dbms.pptx'),
+(3,  2,  'assignment_solution.docx',     1536000,  'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3', '/tmp/blinddrop/sess_2/assignment_solution.docx'),
+(4,  3,  'project_report.pdf',           3145728,  'application/pdf',       'c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4', '/tmp/blinddrop/sess_3/project_report.pdf'),
+(5,  4,  'resume_sneha.pdf',             512000,   'application/pdf',       'd4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5', '/tmp/blinddrop/sess_4/resume_sneha.pdf'),
+(6,  5,  'presentation_ml.pptx',         5242880,  'application/vnd.openxmlformats-officedocument.presentationml.presentation', 'e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6', '/tmp/blinddrop/sess_5/presentation_ml.pptx'),
+(7,  5,  'ml_dataset.csv',               8388608,  'text/csv',              'e5a1b2c3d4f6e5a1b2c3d4f6e5a1b2c3d4f6e5a1b2c3d4f6e5a1b2c3d4f6e5a1', '/tmp/blinddrop/sess_5/ml_dataset.csv'),
+(8,  5,  'ml_notebook.py',               4096,     'text/x-python',         'e5b2c3d4a1f6e5b2c3d4a1f6e5b2c3d4a1f6e5b2c3d4a1f6e5b2c3d4a1f6e5b2', '/tmp/blinddrop/sess_5/ml_notebook.py'),
+(9,  6,  'code_snippet.py',              4096,     'text/x-python',         'f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1', '/tmp/blinddrop/sess_6/code_snippet.py'),
+(10, 7,  'dataset_analytics.csv',        8388608,  'text/csv',              'a2b3c4d5e6f1a2b3c4d5e6f1a2b3c4d5e6f1a2b3c4d5e6f1a2b3c4d5e6f1a2b3', '/tmp/blinddrop/sess_7/dataset_analytics.csv'),
+(11, 7,  'analytics_report.pdf',         2097152,  'application/pdf',       'a2c3d4e5b6f1a2c3d4e5b6f1a2c3d4e5b6f1a2c3d4e5b6f1a2c3d4e5b6f1a2c3', '/tmp/blinddrop/sess_7/analytics_report.pdf'),
+(12, 8,  'photo_id_card.jpg',            1048576,  'image/jpeg',            'b3c4d5e6f1a2b3c4d5e6f1a2b3c4d5e6f1a2b3c4d5e6f1a2b3c4d5e6f1a2b3c4', '/tmp/blinddrop/sess_8/photo_id_card.jpg'),
+(13, 9,  'lab_manual.pdf',               2621440,  'application/pdf',       'c4d5e6f1a2b3c4d5e6f1a2b3c4d5e6f1a2b3c4d5e6f1a2b3c4d5e6f1a2b3c4d5', '/tmp/blinddrop/sess_9/lab_manual.pdf'),
+(14, 10, 'spreadsheet_budget.xlsx',      768000,   'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'd5e6f1a2b3c4d5e6f1a2b3c4d5e6f1a2b3c4d5e6f1a2b3c4d5e6f1a2b3c4d5e6', '/tmp/blinddrop/sess_10/spreadsheet_budget.xlsx'),
+(15, 11, 'thesis_draft.pdf',             4194304,  'application/pdf',       'e6f1a2b3c4d5e6f1a2b3c4d5e6f1a2b3c4d5e6f1a2b3c4d5e6f1a2b3c4d5e6f1', '/tmp/blinddrop/sess_11/thesis_draft.pdf'),
+(16, 12, 'certificate_scan.png',         2097152,  'image/png',             'f1a2b3c4d5e6f1a2b3c4d5e6f1a2b3c4d5e6f1a2b3c4d5e6f1a2b3c4d5e6f1a2', '/tmp/blinddrop/sess_12/certificate_scan.png'),
+(17, 13, 'research_paper.pdf',           3670016,  'application/pdf',       'a3b4c5d6e7f2a3b4c5d6e7f2a3b4c5d6e7f2a3b4c5d6e7f2a3b4c5d6e7f2a3b4', '/tmp/blinddrop/sess_13/research_paper.pdf'),
+(18, 13, 'research_data.csv',            1024000,  'text/csv',              'a3c4d5e6b7f2a3c4d5e6b7f2a3c4d5e6b7f2a3c4d5e6b7f2a3c4d5e6b7f2a3c4', '/tmp/blinddrop/sess_13/research_data.csv'),
+(19, 14, 'notes_algebra.pdf',            1024000,  'application/pdf',       'b4c5d6e7f2a3b4c5d6e7f2a3b4c5d6e7f2a3b4c5d6e7f2a3b4c5d6e7f2a3b4c5', '/tmp/blinddrop/sess_14/notes_algebra.pdf'),
+(20, 15, 'video_clip.mp4',               10485760, 'video/mp4',             'c5d6e7f2a3b4c5d6e7f2a3b4c5d6e7f2a3b4c5d6e7f2a3b4c5d6e7f2a3b4c5d6', '/tmp/blinddrop/sess_15/video_clip.mp4'),
+(21, 16, 'form_filled.pdf',              256000,   'application/pdf',       'd6e7f2a3b4c5d6e7f2a3b4c5d6e7f2a3b4c5d6e7f2a3b4c5d6e7f2a3b4c5d6e7', '/tmp/blinddrop/sess_16/form_filled.pdf'),
+(22, 17, 'slides_networking.pptx',       6291456,  'application/vnd.openxmlformats-officedocument.presentationml.presentation', 'e7f2a3b4c5d6e7f2a3b4c5d6e7f2a3b4c5d6e7f2a3b4c5d6e7f2a3b4c5d6e7f2', '/tmp/blinddrop/sess_17/slides_networking.pptx'),
+(23, 18, 'marksheet_scan.jpg',           1572864,  'image/jpeg',            'f2a3b4c5d6e7f2a3b4c5d6e7f2a3b4c5d6e7f2a3b4c5d6e7f2a3b4c5d6e7f2a3', '/tmp/blinddrop/sess_18/marksheet_scan.jpg'),
+(24, 19, 'ebook_chapter.pdf',            2359296,  'application/pdf',       'a4b5c6d7e8f3a4b5c6d7e8f3a4b5c6d7e8f3a4b5c6d7e8f3a4b5c6d7e8f3a4b5', '/tmp/blinddrop/sess_19/ebook_chapter.pdf'),
+(25, 20, 'invoice_receipt.pdf',          384000,   'application/pdf',       'b5c6d7e8f3a4b5c6d7e8f3a4b5c6d7e8f3a4b5c6d7e8f3a4b5c6d7e8f3a4b5c6', '/tmp/blinddrop/sess_20/invoice_receipt.pdf');
 
 -- 1f. OneTimeToken
 INSERT INTO OneTimeToken (tokenID, sessionID, tokenValue, createdAt, expiryAt, status) VALUES
@@ -149,20 +154,20 @@ INSERT INTO RateLimitLog (requestID, deviceID, timestamp, eventType) VALUES
 -- 1i. FileIntegrityCheck
 INSERT INTO FileIntegrityCheck (checkID, fileID, computedChecksum, verified, timestamp) VALUES
 (1,  1,  'a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2', TRUE,  '2026-02-10 09:00:05'),
-(2,  2,  'b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3', TRUE,  '2026-02-10 09:15:05'),
-(3,  3,  'c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4', TRUE,  '2026-02-10 10:00:05'),
-(4,  4,  'd4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5', TRUE,  '2026-02-10 10:30:05'),
-(5,  5,  'e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6', TRUE,  '2026-02-10 11:00:05'),
-(6,  6,  'f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1', TRUE,  '2026-02-10 11:30:05'),
-(7,  7,  'a2b3c4d5e6f1a2b3c4d5e6f1a2b3c4d5e6f1a2b3c4d5e6f1a2b3c4d5e6f1a2b3', TRUE,  '2026-02-10 12:00:05'),
-(8,  8,  'b3c4d5e6f1a2b3c4d5e6f1a2b3c4d5e6f1a2b3c4d5e6f1a2b3c4d5e6f1a2b3c4', TRUE,  '2026-02-10 12:30:05'),
-(9,  9,  'c4d5e6f1a2b3c4d5e6f1a2b3c4d5e6f1a2b3c4d5e6f1a2b3c4d5e6f1a2b3c4d5', TRUE,  '2026-02-10 13:00:05'),
-(10, 10, 'd5e6f1a2b3c4d5e6f1a2b3c4d5e6f1a2b3c4d5e6f1a2b3c4d5e6f1a2b3c4d5e6', TRUE,  '2026-02-10 13:30:05'),
-(11, 11, 'e6f1a2b3c4d5e6f1a2b3c4d5e6f1a2b3c4d5e6f1a2b3c4d5e6f1a2b3c4d5e6f1', TRUE,  '2026-02-10 14:00:05'),
-(12, 12, 'f1a2b3c4d5e6f1a2b3c4d5e6f1a2b3c4d5e6f1a2b3c4d5e6f1a2b3c4d5e6f1a2', TRUE,  '2026-02-10 14:30:05'),
+(2,  2,  'a1c2d3e4f5a6a1c2d3e4f5a6a1c2d3e4f5a6a1c2d3e4f5a6a1c2d3e4f5a6a1c2', TRUE,  '2026-02-10 09:00:06'),
+(3,  3,  'b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3', TRUE,  '2026-02-10 09:15:05'),
+(4,  4,  'c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4', TRUE,  '2026-02-10 10:00:05'),
+(5,  5,  'd4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5', TRUE,  '2026-02-10 10:30:05'),
+(6,  6,  'e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6', TRUE,  '2026-02-10 11:00:05'),
+(7,  7,  'e5a1b2c3d4f6e5a1b2c3d4f6e5a1b2c3d4f6e5a1b2c3d4f6e5a1b2c3d4f6e5a1', TRUE,  '2026-02-10 11:00:06'),
+(8,  8,  'e5b2c3d4a1f6e5b2c3d4a1f6e5b2c3d4a1f6e5b2c3d4a1f6e5b2c3d4a1f6e5b2', TRUE,  '2026-02-10 11:00:07'),
+(9,  9,  'f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1', TRUE,  '2026-02-10 11:30:05'),
+(10, 10, 'a2b3c4d5e6f1a2b3c4d5e6f1a2b3c4d5e6f1a2b3c4d5e6f1a2b3c4d5e6f1a2b3', TRUE,  '2026-02-10 12:00:05'),
+(11, 12, 'b3c4d5e6f1a2b3c4d5e6f1a2b3c4d5e6f1a2b3c4d5e6f1a2b3c4d5e6f1a2b3c4', TRUE,  '2026-02-10 12:30:05'),
+(12, 13, 'c4d5e6f1a2b3c4d5e6f1a2b3c4d5e6f1a2b3c4d5e6f1a2b3c4d5e6f1a2b3c4d5', TRUE,  '2026-02-10 13:00:05'),
 (13, 1,  'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', FALSE, '2026-02-10 09:04:00'),
-(14, 13, 'a3b4c5d6e7f2a3b4c5d6e7f2a3b4c5d6e7f2a3b4c5d6e7f2a3b4c5d6e7f2a3b4', TRUE,  '2026-02-11 09:00:05'),
-(15, 15, 'c5d6e7f2a3b4c5d6e7f2a3b4c5d6e7f2a3b4c5d6e7f2a3b4c5d6e7f2a3b4c5d6', TRUE,  '2026-02-11 10:00:05');
+(14, 17, 'a3b4c5d6e7f2a3b4c5d6e7f2a3b4c5d6e7f2a3b4c5d6e7f2a3b4c5d6e7f2a3b4', TRUE,  '2026-02-11 09:00:05'),
+(15, 20, 'c5d6e7f2a3b4c5d6e7f2a3b4c5d6e7f2a3b4c5d6e7f2a3b4c5d6e7f2a3b4c5d6', TRUE,  '2026-02-11 10:00:05');
 
 -- 1j. SystemAdmin
 INSERT INTO SystemAdmin (adminID, name, email) VALUES

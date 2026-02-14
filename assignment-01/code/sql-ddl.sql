@@ -53,7 +53,7 @@ CREATE TABLE UploadSession (
 
 CREATE TABLE FileMetadata (
     fileID INT PRIMARY KEY,
-    sessionID INT NOT NULL UNIQUE,
+    sessionID INT NOT NULL,
     fileName VARCHAR(255) NOT NULL,
     fileSize INT NOT NULL CHECK (fileSize > 0),
     mimeType VARCHAR(100) NOT NULL,

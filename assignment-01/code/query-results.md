@@ -7,10 +7,12 @@
 ```
  sessionid |     name      |        filename        | status
          5 | Vikram Singh  | presentation_ml.pptx   | ACTIVE
+         5 | Vikram Singh  | ml_dataset.csv         | ACTIVE
+         5 | Vikram Singh  | ml_notebook.py         | ACTIVE
         11 | Rahul Verma   | thesis_draft.pdf       | ACTIVE
         17 | Siddharth Rao | slides_networking.pptx | ACTIVE
         20 | Priya Patel   | invoice_receipt.pdf    | ACTIVE
-(4 rows)
+(6 rows)
 ```
 
 ### 1b. token for an active session
@@ -18,7 +20,9 @@
 ```
    tokenvalue   |      expiryat       |       filename
  TKN-U1V2W3X4Y5 | 2026-02-10 11:30:00 | presentation_ml.pptx
-(1 row)
+ TKN-U1V2W3X4Y5 | 2026-02-10 11:30:00 | ml_dataset.csv
+ TKN-U1V2W3X4Y5 | 2026-02-10 11:30:00 | ml_notebook.py
+(3 rows)
 ```
 
 ### 1c. uploads per device
@@ -48,7 +52,9 @@
 ```
    tokenvalue   | status |       filename       |                storagepath
  TKN-U1V2W3X4Y5 | ACTIVE | presentation_ml.pptx | /tmp/blinddrop/sess_5/presentation_ml.pptx
-(1 row)
+ TKN-U1V2W3X4Y5 | ACTIVE | ml_dataset.csv       | /tmp/blinddrop/sess_5/ml_dataset.csv
+ TKN-U1V2W3X4Y5 | ACTIVE | ml_notebook.py       | /tmp/blinddrop/sess_5/ml_notebook.py
+(3 rows)
 ```
 
 ### 2b. download history
@@ -59,15 +65,19 @@
          10 | 2026-02-11 10:33:00 | iPhone 14 - Safari 18 - iOS 18.5             | form_filled.pdf
           9 | 2026-02-11 10:08:30 | Lenovo ThinkPad - Firefox 135 - Ubuntu 24.04 | video_clip.mp4
           8 | 2026-02-11 09:30:00 | HP Pavilion - Edge 130 - Windows 12          | research_paper.pdf
+          8 | 2026-02-11 09:30:00 | HP Pavilion - Edge 130 - Windows 12          | research_data.csv
           7 | 2026-02-10 14:32:15 | Google Pixel 10 - Chrome 130 - Android 16    | certificate_scan.png
           6 | 2026-02-10 13:35:50 | OnePlus 13 - Chrome 130 - Android 16         | spreadsheet_budget.xlsx
           4 | 2026-02-10 12:45:00 | Dell Inspiron - Firefox 135 - Windows 12     | dataset_analytics.csv
+          4 | 2026-02-10 12:45:00 | Dell Inspiron - Firefox 135 - Windows 12     | analytics_report.pdf
           5 | 2026-02-10 12:33:20 | iPad Pro - Safari 19 - iPadOS 19             | photo_id_card.jpg
           3 | 2026-02-10 10:32:10 | MacBook Air M4 - Safari 19 - macOS 16        | resume_sneha.pdf
           2 | 2026-02-10 09:18:45 | Samsung Galaxy S25 - Chrome 130 - Android 16 | assignment_solution.docx
+         12 | 2026-02-10 09:03:00 | iPad Mini - Safari 19 - iPadOS 19            | lecture_slides_dbms.pptx
          12 | 2026-02-10 09:03:00 | iPad Mini - Safari 19 - iPadOS 19            | lecture_notes_dbms.pdf
           1 | 2026-02-10 09:02:30 | iPhone 15 Pro - Safari 19 - iOS 19.2         | lecture_notes_dbms.pdf
-(12 rows)
+          1 | 2026-02-10 09:02:30 | iPhone 15 Pro - Safari 19 - iOS 19.2         | lecture_slides_dbms.pptx
+(16 rows)
 ```
 
 ### 2c. files downloaded within 5 minutes of upload
@@ -75,13 +85,15 @@
 ```
          filename         |   uploadtimestamp   |    downloadtime
  lecture_notes_dbms.pdf   | 2026-02-10 09:00:00 | 2026-02-10 09:02:30
+ lecture_slides_dbms.pptx | 2026-02-10 09:00:00 | 2026-02-10 09:02:30
  assignment_solution.docx | 2026-02-10 09:15:00 | 2026-02-10 09:18:45
  resume_sneha.pdf         | 2026-02-10 10:30:00 | 2026-02-10 10:32:10
  photo_id_card.jpg        | 2026-02-10 12:30:00 | 2026-02-10 12:33:20
  certificate_scan.png     | 2026-02-10 14:30:00 | 2026-02-10 14:32:15
  form_filled.pdf          | 2026-02-11 10:30:00 | 2026-02-11 10:33:00
  lecture_notes_dbms.pdf   | 2026-02-10 09:00:00 | 2026-02-10 09:03:00
-(7 rows)
+ lecture_slides_dbms.pptx | 2026-02-10 09:00:00 | 2026-02-10 09:03:00
+(9 rows)
 ```
 
 
@@ -104,10 +116,12 @@
 ```
  sessionid |        filename        |   expirytimestamp
          5 | presentation_ml.pptx   | 2026-02-10 11:30:00
+         5 | ml_dataset.csv         | 2026-02-10 11:30:00
+         5 | ml_notebook.py         | 2026-02-10 11:30:00
         11 | thesis_draft.pdf       | 2026-02-10 14:30:00
         17 | slides_networking.pptx | 2026-02-11 11:30:00
         20 | invoice_receipt.pdf    | 2026-02-11 12:35:00
-(4 rows)
+(6 rows)
 ```
 
 ### 3c. session status counts
@@ -182,18 +196,18 @@
 ```
          filename         | verified |      timestamp
  lecture_notes_dbms.pdf   | t        | 2026-02-10 09:00:05
+ lecture_slides_dbms.pptx | t        | 2026-02-10 09:00:06
  lecture_notes_dbms.pdf   | f        | 2026-02-10 09:04:00
  assignment_solution.docx | t        | 2026-02-10 09:15:05
  project_report.pdf       | t        | 2026-02-10 10:00:05
  resume_sneha.pdf         | t        | 2026-02-10 10:30:05
  presentation_ml.pptx     | t        | 2026-02-10 11:00:05
+ ml_dataset.csv           | t        | 2026-02-10 11:00:06
+ ml_notebook.py           | t        | 2026-02-10 11:00:07
  code_snippet.py          | t        | 2026-02-10 11:30:05
  dataset_analytics.csv    | t        | 2026-02-10 12:00:05
  photo_id_card.jpg        | t        | 2026-02-10 12:30:05
  lab_manual.pdf           | t        | 2026-02-10 13:00:05
- spreadsheet_budget.xlsx  | t        | 2026-02-10 13:30:05
- thesis_draft.pdf         | t        | 2026-02-10 14:00:05
- certificate_scan.png     | t        | 2026-02-10 14:30:05
  research_paper.pdf       | t        | 2026-02-11 09:00:05
  video_clip.mp4           | t        | 2026-02-11 10:00:05
 (15 rows)
@@ -306,15 +320,15 @@
 
 ```
                                  mimetype                                  | uploadcount
- application/pdf                                                           |          10
+ application/pdf                                                           |          11
+ application/vnd.openxmlformats-officedocument.presentationml.presentation |           3
+ text/csv                                                                  |           3
  image/jpeg                                                                |           2
- application/vnd.openxmlformats-officedocument.presentationml.presentation |           2
- application/vnd.openxmlformats-officedocument.spreadsheetml.sheet         |           1
- image/png                                                                 |           1
+ text/x-python                                                             |           2
  application/vnd.openxmlformats-officedocument.wordprocessingml.document   |           1
- text/csv                                                                  |           1
+ image/png                                                                 |           1
  video/mp4                                                                 |           1
- text/x-python                                                             |           1
+ application/vnd.openxmlformats-officedocument.spreadsheetml.sheet         |           1
 (9 rows)
 ```
 
