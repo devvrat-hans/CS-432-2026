@@ -1,6 +1,5 @@
---
+
 -- PostgreSQL database dump
---
 
 \restrict CpL8CafxdBzL51ytdnRYaZd7btmIffZRjStgw6NRsEINGpnheOEJ3zCHImz85SV
 
@@ -22,9 +21,7 @@ SET default_tablespace = '';
 
 SET default_table_access_method = heap;
 
---
 -- Name: audittrail; Type: TABLE; Schema: public; Owner: devvrathans
---
 
 CREATE TABLE public.audittrail (
     auditid integer NOT NULL,
@@ -36,9 +33,7 @@ CREATE TABLE public.audittrail (
 
 ALTER TABLE public.audittrail OWNER TO devvrathans;
 
---
 -- Name: device; Type: TABLE; Schema: public; Owner: devvrathans
---
 
 CREATE TABLE public.device (
     deviceid integer NOT NULL,
@@ -50,9 +45,7 @@ CREATE TABLE public.device (
 
 ALTER TABLE public.device OWNER TO devvrathans;
 
---
 -- Name: downloadlog; Type: TABLE; Schema: public; Owner: devvrathans
---
 
 CREATE TABLE public.downloadlog (
     downloadid integer NOT NULL,
@@ -64,9 +57,7 @@ CREATE TABLE public.downloadlog (
 
 ALTER TABLE public.downloadlog OWNER TO devvrathans;
 
---
 -- Name: errorlog; Type: TABLE; Schema: public; Owner: devvrathans
---
 
 CREATE TABLE public.errorlog (
     errorid integer NOT NULL,
@@ -78,9 +69,7 @@ CREATE TABLE public.errorlog (
 
 ALTER TABLE public.errorlog OWNER TO devvrathans;
 
---
 -- Name: expirypolicy; Type: TABLE; Schema: public; Owner: devvrathans
---
 
 CREATE TABLE public.expirypolicy (
     policyid integer NOT NULL,
@@ -92,9 +81,7 @@ CREATE TABLE public.expirypolicy (
 
 ALTER TABLE public.expirypolicy OWNER TO devvrathans;
 
---
 -- Name: fileintegritycheck; Type: TABLE; Schema: public; Owner: devvrathans
---
 
 CREATE TABLE public.fileintegritycheck (
     checkid integer NOT NULL,
@@ -107,9 +94,7 @@ CREATE TABLE public.fileintegritycheck (
 
 ALTER TABLE public.fileintegritycheck OWNER TO devvrathans;
 
---
 -- Name: filemetadata; Type: TABLE; Schema: public; Owner: devvrathans
---
 
 CREATE TABLE public.filemetadata (
     fileid integer NOT NULL,
@@ -125,9 +110,7 @@ CREATE TABLE public.filemetadata (
 
 ALTER TABLE public.filemetadata OWNER TO devvrathans;
 
---
 -- Name: member; Type: TABLE; Schema: public; Owner: devvrathans
---
 
 CREATE TABLE public.member (
     memberid integer NOT NULL,
@@ -142,9 +125,7 @@ CREATE TABLE public.member (
 
 ALTER TABLE public.member OWNER TO devvrathans;
 
---
 -- Name: onetimetoken; Type: TABLE; Schema: public; Owner: devvrathans
---
 
 CREATE TABLE public.onetimetoken (
     tokenid integer NOT NULL,
@@ -160,9 +141,7 @@ CREATE TABLE public.onetimetoken (
 
 ALTER TABLE public.onetimetoken OWNER TO devvrathans;
 
---
 -- Name: ratelimitlog; Type: TABLE; Schema: public; Owner: devvrathans
---
 
 CREATE TABLE public.ratelimitlog (
     requestid integer NOT NULL,
@@ -174,9 +153,7 @@ CREATE TABLE public.ratelimitlog (
 
 ALTER TABLE public.ratelimitlog OWNER TO devvrathans;
 
---
 -- Name: systemadmin; Type: TABLE; Schema: public; Owner: devvrathans
---
 
 CREATE TABLE public.systemadmin (
     adminid integer NOT NULL,
@@ -187,13 +164,10 @@ CREATE TABLE public.systemadmin (
 
 ALTER TABLE public.systemadmin OWNER TO devvrathans;
 
---
 -- Name: uploadsession; Type: TABLE; Schema: public; Owner: devvrathans
---
 
 CREATE TABLE public.uploadsession (
     sessionid integer NOT NULL,
-    memberid integer NOT NULL,
     deviceid integer NOT NULL,
     policyid integer NOT NULL,
     uploadtimestamp timestamp without time zone NOT NULL,
@@ -206,9 +180,7 @@ CREATE TABLE public.uploadsession (
 
 ALTER TABLE public.uploadsession OWNER TO devvrathans;
 
---
 -- Data for Name: audittrail; Type: TABLE DATA; Schema: public; Owner: devvrathans
---
 
 COPY public.audittrail (auditid, action, sessionid, "timestamp") FROM stdin;
 1	FILE_UPLOADED	1	2026-02-10 09:00:00
@@ -233,10 +205,7 @@ COPY public.audittrail (auditid, action, sessionid, "timestamp") FROM stdin;
 20	RATE_LIMIT_TRIGGERED	5	2026-02-10 11:05:00
 \.
 
-
---
 -- Data for Name: device; Type: TABLE DATA; Schema: public; Owner: devvrathans
---
 
 COPY public.device (deviceid, location, devicetype, ipaddress) FROM stdin;
 1	Central Library - Floor 1	Desktop	10.0.1.101
@@ -253,10 +222,8 @@ COPY public.device (deviceid, location, devicetype, ipaddress) FROM stdin;
 12	Workshop Lab - AB3	Desktop	10.0.5.502
 \.
 
-
---
 -- Data for Name: downloadlog; Type: TABLE DATA; Schema: public; Owner: devvrathans
---
+
 
 COPY public.downloadlog (downloadid, tokenid, downloadtime, userdeviceinfo) FROM stdin;
 1	1	2026-02-10 09:02:30	iPhone 15 Pro - Safari 19 - iOS 19.2
@@ -293,10 +260,7 @@ COPY public.errorlog (errorid, sessionid, errormessage, "timestamp") FROM stdin;
 12	6	Concurrent download attempt blocked	2026-02-10 11:39:00
 \.
 
-
---
 -- Data for Name: expirypolicy; Type: TABLE DATA; Schema: public; Owner: devvrathans
---
 
 COPY public.expirypolicy (policyid, maxlifetimeminutes, deleteafterfirstdownload) FROM stdin;
 1	5	t
@@ -311,10 +275,7 @@ COPY public.expirypolicy (policyid, maxlifetimeminutes, deleteafterfirstdownload
 10	60	f
 \.
 
-
---
 -- Data for Name: fileintegritycheck; Type: TABLE DATA; Schema: public; Owner: devvrathans
---
 
 COPY public.fileintegritycheck (checkid, fileid, computedchecksum, verified, "timestamp") FROM stdin;
 1	1	a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2	t	2026-02-10 09:00:05
@@ -334,10 +295,7 @@ COPY public.fileintegritycheck (checkid, fileid, computedchecksum, verified, "ti
 15	20	c5d6e7f2a3b4c5d6e7f2a3b4c5d6e7f2a3b4c5d6e7f2a3b4c5d6e7f2a3b4c5d6	t	2026-02-11 10:00:05
 \.
 
-
---
 -- Data for Name: filemetadata; Type: TABLE DATA; Schema: public; Owner: devvrathans
---
 
 COPY public.filemetadata (fileid, sessionid, filename, filesize, mimetype, checksum, storagepath) FROM stdin;
 1	1	lecture_notes_dbms.pdf	2048576	application/pdf	a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2	/tmp/blinddrop/sess_1/lecture_notes_dbms.pdf
@@ -367,10 +325,7 @@ COPY public.filemetadata (fileid, sessionid, filename, filesize, mimetype, check
 25	20	invoice_receipt.pdf	384000	application/pdf	b5c6d7e8f3a4b5c6d7e8f3a4b5c6d7e8f3a4b5c6d7e8f3a4b5c6d7e8f3a4b5c6	/tmp/blinddrop/sess_20/invoice_receipt.pdf
 \.
 
-
---
 -- Data for Name: member; Type: TABLE DATA; Schema: public; Owner: devvrathans
---
 
 COPY public.member (memberid, name, age, image, email, contactnumber) FROM stdin;
 1	Aarav Sharma	21	aarav_sharma.jpg	aarav.sharma@iitgn.ac.in	+91-9876543210
@@ -390,10 +345,7 @@ COPY public.member (memberid, name, age, image, email, contactnumber) FROM stdin
 15	Amit Kulkarni	20	amit_kulkarni.jpg	amit.kulkarni@iitgn.ac.in	+91-9876543224
 \.
 
-
---
 -- Data for Name: onetimetoken; Type: TABLE DATA; Schema: public; Owner: devvrathans
---
 
 COPY public.onetimetoken (tokenid, sessionid, tokenvalue, createdat, expiryat, status) FROM stdin;
 1	1	TKN-A1B2C3D4E5	2026-02-10 09:00:00	2026-02-10 09:05:00	USED
@@ -418,10 +370,7 @@ COPY public.onetimetoken (tokenid, sessionid, tokenvalue, createdat, expiryat, s
 20	20	TKN-R6S7T8U9V0	2026-02-11 12:30:00	2026-02-11 12:35:00	ACTIVE
 \.
 
-
---
 -- Data for Name: ratelimitlog; Type: TABLE DATA; Schema: public; Owner: devvrathans
---
 
 COPY public.ratelimitlog (requestid, deviceid, "timestamp", eventtype) FROM stdin;
 1	1	2026-02-10 09:00:00	UPLOAD
@@ -441,10 +390,7 @@ COPY public.ratelimitlog (requestid, deviceid, "timestamp", eventtype) FROM stdi
 15	7	2026-02-11 10:01:00	RATE_LIMIT_HIT
 \.
 
-
---
 -- Data for Name: systemadmin; Type: TABLE DATA; Schema: public; Owner: devvrathans
---
 
 COPY public.systemadmin (adminid, name, email) FROM stdin;
 1	Dr. Yogesh Meena	yogesh.meena@iitgn.ac.in
@@ -459,246 +405,158 @@ COPY public.systemadmin (adminid, name, email) FROM stdin;
 10	Anil Pandey	anil.pandey@iitgn.ac.in
 \.
 
-
---
 -- Data for Name: uploadsession; Type: TABLE DATA; Schema: public; Owner: devvrathans
---
 
-COPY public.uploadsession (sessionid, memberid, deviceid, policyid, uploadtimestamp, expirytimestamp, status) FROM stdin;
-1	1	1	1	2026-02-10 09:00:00	2026-02-10 09:05:00	DOWNLOADED
-2	2	2	2	2026-02-10 09:15:00	2026-02-10 09:25:00	DOWNLOADED
-3	3	4	3	2026-02-10 10:00:00	2026-02-10 10:15:00	EXPIRED
-4	4	5	1	2026-02-10 10:30:00	2026-02-10 10:35:00	DOWNLOADED
-5	5	7	4	2026-02-10 11:00:00	2026-02-10 11:30:00	ACTIVE
-6	6	3	2	2026-02-10 11:30:00	2026-02-10 11:40:00	EXPIRED
-7	7	8	5	2026-02-10 12:00:00	2026-02-10 13:00:00	DOWNLOADED
-8	8	6	1	2026-02-10 12:30:00	2026-02-10 12:35:00	DOWNLOADED
-9	9	9	3	2026-02-10 13:00:00	2026-02-10 13:15:00	EXPIRED
-10	10	10	2	2026-02-10 13:30:00	2026-02-10 13:40:00	DOWNLOADED
-11	11	11	4	2026-02-10 14:00:00	2026-02-10 14:30:00	ACTIVE
-12	12	12	1	2026-02-10 14:30:00	2026-02-10 14:35:00	DOWNLOADED
-13	1	2	5	2026-02-11 09:00:00	2026-02-11 10:00:00	DOWNLOADED
-14	3	4	2	2026-02-11 09:30:00	2026-02-11 09:40:00	EXPIRED
-15	5	7	3	2026-02-11 10:00:00	2026-02-11 10:15:00	DOWNLOADED
-16	7	1	1	2026-02-11 10:30:00	2026-02-11 10:35:00	DOWNLOADED
-17	13	3	4	2026-02-11 11:00:00	2026-02-11 11:30:00	ACTIVE
-18	14	6	2	2026-02-11 11:30:00	2026-02-11 11:40:00	DOWNLOADED
-19	15	8	5	2026-02-11 12:00:00	2026-02-11 13:00:00	EXPIRED
-20	2	9	1	2026-02-11 12:30:00	2026-02-11 12:35:00	ACTIVE
+COPY public.uploadsession (sessionid, deviceid, policyid, uploadtimestamp, expirytimestamp, status) FROM stdin;
+1	1	1	2026-02-10 09:00:00	2026-02-10 09:05:00	DOWNLOADED
+2	2	2	2026-02-10 09:15:00	2026-02-10 09:25:00	DOWNLOADED
+3	4	3	2026-02-10 10:00:00	2026-02-10 10:15:00	EXPIRED
+4	5	1	2026-02-10 10:30:00	2026-02-10 10:35:00	DOWNLOADED
+5	7	4	2026-02-10 11:00:00	2026-02-10 11:30:00	ACTIVE
+6	3	2	2026-02-10 11:30:00	2026-02-10 11:40:00	EXPIRED
+7	8	5	2026-02-10 12:00:00	2026-02-10 13:00:00	DOWNLOADED
+8	6	1	2026-02-10 12:30:00	2026-02-10 12:35:00	DOWNLOADED
+9	9	3	2026-02-10 13:00:00	2026-02-10 13:15:00	EXPIRED
+10	10	2	2026-02-10 13:30:00	2026-02-10 13:40:00	DOWNLOADED
+11	11	4	2026-02-10 14:00:00	2026-02-10 14:30:00	ACTIVE
+12	12	1	2026-02-10 14:30:00	2026-02-10 14:35:00	DOWNLOADED
+13	2	5	2026-02-11 09:00:00	2026-02-11 10:00:00	DOWNLOADED
+14	4	2	2026-02-11 09:30:00	2026-02-11 09:40:00	EXPIRED
+15	7	3	2026-02-11 10:00:00	2026-02-11 10:15:00	DOWNLOADED
+16	1	1	2026-02-11 10:30:00	2026-02-11 10:35:00	DOWNLOADED
+17	3	4	2026-02-11 11:00:00	2026-02-11 11:30:00	ACTIVE
+18	6	2	2026-02-11 11:30:00	2026-02-11 11:40:00	DOWNLOADED
+19	8	5	2026-02-11 12:00:00	2026-02-11 13:00:00	EXPIRED
+20	9	1	2026-02-11 12:30:00	2026-02-11 12:35:00	ACTIVE
 \.
 
-
---
 -- Name: audittrail audittrail_pkey; Type: CONSTRAINT; Schema: public; Owner: devvrathans
---
 
 ALTER TABLE ONLY public.audittrail
     ADD CONSTRAINT audittrail_pkey PRIMARY KEY (auditid);
 
-
---
 -- Name: device device_pkey; Type: CONSTRAINT; Schema: public; Owner: devvrathans
---
+
 
 ALTER TABLE ONLY public.device
     ADD CONSTRAINT device_pkey PRIMARY KEY (deviceid);
 
-
---
 -- Name: downloadlog downloadlog_pkey; Type: CONSTRAINT; Schema: public; Owner: devvrathans
---
 
 ALTER TABLE ONLY public.downloadlog
     ADD CONSTRAINT downloadlog_pkey PRIMARY KEY (downloadid);
 
-
---
 -- Name: errorlog errorlog_pkey; Type: CONSTRAINT; Schema: public; Owner: devvrathans
---
 
 ALTER TABLE ONLY public.errorlog
     ADD CONSTRAINT errorlog_pkey PRIMARY KEY (errorid);
 
-
---
 -- Name: expirypolicy expirypolicy_pkey; Type: CONSTRAINT; Schema: public; Owner: devvrathans
---
 
 ALTER TABLE ONLY public.expirypolicy
     ADD CONSTRAINT expirypolicy_pkey PRIMARY KEY (policyid);
 
-
---
 -- Name: fileintegritycheck fileintegritycheck_pkey; Type: CONSTRAINT; Schema: public; Owner: devvrathans
---
 
 ALTER TABLE ONLY public.fileintegritycheck
     ADD CONSTRAINT fileintegritycheck_pkey PRIMARY KEY (checkid);
 
-
---
 -- Name: filemetadata filemetadata_pkey; Type: CONSTRAINT; Schema: public; Owner: devvrathans
---
 
 ALTER TABLE ONLY public.filemetadata
     ADD CONSTRAINT filemetadata_pkey PRIMARY KEY (fileid);
 
-
---
 -- Name: member member_email_key; Type: CONSTRAINT; Schema: public; Owner: devvrathans
---
 
 ALTER TABLE ONLY public.member
     ADD CONSTRAINT member_email_key UNIQUE (email);
 
-
---
 -- Name: member member_pkey; Type: CONSTRAINT; Schema: public; Owner: devvrathans
---
 
 ALTER TABLE ONLY public.member
     ADD CONSTRAINT member_pkey PRIMARY KEY (memberid);
 
-
---
 -- Name: onetimetoken onetimetoken_pkey; Type: CONSTRAINT; Schema: public; Owner: devvrathans
---
 
 ALTER TABLE ONLY public.onetimetoken
     ADD CONSTRAINT onetimetoken_pkey PRIMARY KEY (tokenid);
 
-
---
 -- Name: onetimetoken onetimetoken_sessionid_key; Type: CONSTRAINT; Schema: public; Owner: devvrathans
---
 
 ALTER TABLE ONLY public.onetimetoken
     ADD CONSTRAINT onetimetoken_sessionid_key UNIQUE (sessionid);
 
-
---
 -- Name: onetimetoken onetimetoken_tokenvalue_key; Type: CONSTRAINT; Schema: public; Owner: devvrathans
---
 
 ALTER TABLE ONLY public.onetimetoken
     ADD CONSTRAINT onetimetoken_tokenvalue_key UNIQUE (tokenvalue);
 
-
---
 -- Name: ratelimitlog ratelimitlog_pkey; Type: CONSTRAINT; Schema: public; Owner: devvrathans
---
 
 ALTER TABLE ONLY public.ratelimitlog
     ADD CONSTRAINT ratelimitlog_pkey PRIMARY KEY (requestid);
 
-
---
 -- Name: systemadmin systemadmin_email_key; Type: CONSTRAINT; Schema: public; Owner: devvrathans
---
 
 ALTER TABLE ONLY public.systemadmin
     ADD CONSTRAINT systemadmin_email_key UNIQUE (email);
 
-
---
 -- Name: systemadmin systemadmin_pkey; Type: CONSTRAINT; Schema: public; Owner: devvrathans
---
 
 ALTER TABLE ONLY public.systemadmin
     ADD CONSTRAINT systemadmin_pkey PRIMARY KEY (adminid);
 
-
---
 -- Name: uploadsession uploadsession_pkey; Type: CONSTRAINT; Schema: public; Owner: devvrathans
---
 
 ALTER TABLE ONLY public.uploadsession
     ADD CONSTRAINT uploadsession_pkey PRIMARY KEY (sessionid);
 
-
---
 -- Name: audittrail fk_audit_session; Type: FK CONSTRAINT; Schema: public; Owner: devvrathans
---
 
 ALTER TABLE ONLY public.audittrail
     ADD CONSTRAINT fk_audit_session FOREIGN KEY (sessionid) REFERENCES public.uploadsession(sessionid) ON UPDATE CASCADE ON DELETE CASCADE;
 
-
---
 -- Name: downloadlog fk_download_token; Type: FK CONSTRAINT; Schema: public; Owner: devvrathans
---
 
 ALTER TABLE ONLY public.downloadlog
     ADD CONSTRAINT fk_download_token FOREIGN KEY (tokenid) REFERENCES public.onetimetoken(tokenid) ON UPDATE CASCADE ON DELETE CASCADE;
 
-
---
 -- Name: errorlog fk_error_session; Type: FK CONSTRAINT; Schema: public; Owner: devvrathans
---
 
 ALTER TABLE ONLY public.errorlog
     ADD CONSTRAINT fk_error_session FOREIGN KEY (sessionid) REFERENCES public.uploadsession(sessionid) ON UPDATE CASCADE ON DELETE CASCADE;
 
-
---
 -- Name: filemetadata fk_file_session; Type: FK CONSTRAINT; Schema: public; Owner: devvrathans
---
 
 ALTER TABLE ONLY public.filemetadata
     ADD CONSTRAINT fk_file_session FOREIGN KEY (sessionid) REFERENCES public.uploadsession(sessionid) ON UPDATE CASCADE ON DELETE CASCADE;
 
-
---
 -- Name: fileintegritycheck fk_integrity_file; Type: FK CONSTRAINT; Schema: public; Owner: devvrathans
---
 
 ALTER TABLE ONLY public.fileintegritycheck
     ADD CONSTRAINT fk_integrity_file FOREIGN KEY (fileid) REFERENCES public.filemetadata(fileid) ON UPDATE CASCADE ON DELETE CASCADE;
 
-
---
 -- Name: ratelimitlog fk_ratelimit_device; Type: FK CONSTRAINT; Schema: public; Owner: devvrathans
---
 
 ALTER TABLE ONLY public.ratelimitlog
     ADD CONSTRAINT fk_ratelimit_device FOREIGN KEY (deviceid) REFERENCES public.device(deviceid) ON UPDATE CASCADE ON DELETE CASCADE;
 
-
---
 -- Name: uploadsession fk_session_device; Type: FK CONSTRAINT; Schema: public; Owner: devvrathans
---
 
 ALTER TABLE ONLY public.uploadsession
     ADD CONSTRAINT fk_session_device FOREIGN KEY (deviceid) REFERENCES public.device(deviceid) ON UPDATE CASCADE ON DELETE RESTRICT;
 
-
---
--- Name: uploadsession fk_session_member; Type: FK CONSTRAINT; Schema: public; Owner: devvrathans
---
-
-ALTER TABLE ONLY public.uploadsession
-    ADD CONSTRAINT fk_session_member FOREIGN KEY (memberid) REFERENCES public.member(memberid) ON UPDATE CASCADE ON DELETE RESTRICT;
-
-
---
 -- Name: uploadsession fk_session_policy; Type: FK CONSTRAINT; Schema: public; Owner: devvrathans
---
 
 ALTER TABLE ONLY public.uploadsession
     ADD CONSTRAINT fk_session_policy FOREIGN KEY (policyid) REFERENCES public.expirypolicy(policyid) ON UPDATE CASCADE ON DELETE RESTRICT;
 
-
---
 -- Name: onetimetoken fk_token_session; Type: FK CONSTRAINT; Schema: public; Owner: devvrathans
---
 
 ALTER TABLE ONLY public.onetimetoken
     ADD CONSTRAINT fk_token_session FOREIGN KEY (sessionid) REFERENCES public.uploadsession(sessionid) ON UPDATE CASCADE ON DELETE CASCADE;
 
-
---
 -- PostgreSQL database dump complete
---
 
 \unrestrict CpL8CafxdBzL51ytdnRYaZd7btmIffZRjStgw6NRsEINGpnheOEJ3zCHImz85SV
 
