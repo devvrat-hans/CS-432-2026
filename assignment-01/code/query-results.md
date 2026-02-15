@@ -5,13 +5,13 @@
 ### 1a. all active upload sessions
 
 ```
- sessionid |     name      |        filename        | status
-         5 | Vikram Singh  | presentation_ml.pptx   | ACTIVE
-         5 | Vikram Singh  | ml_dataset.csv         | ACTIVE
-         5 | Vikram Singh  | ml_notebook.py         | ACTIVE
-        11 | Rahul Verma   | thesis_draft.pdf       | ACTIVE
-        17 | Siddharth Rao | slides_networking.pptx | ACTIVE
-        20 | Priya Patel   | invoice_receipt.pdf    | ACTIVE
+ sessionid |        filename        | status
+         5 | presentation_ml.pptx   | ACTIVE
+         5 | ml_dataset.csv         | ACTIVE
+         5 | ml_notebook.py         | ACTIVE
+        11 | thesis_draft.pdf       | ACTIVE
+        17 | slides_networking.pptx | ACTIVE
+        20 | invoice_receipt.pdf    | ACTIVE
 (6 rows)
 ```
 
@@ -43,7 +43,6 @@
  Placement Cell Office      |            1
 (12 rows)
 ```
-
 
 ## Functionality 2: File Download Using One-Time Token
 
@@ -96,18 +95,17 @@
 (9 rows)
 ```
 
-
 ## Functionality 3: Auto-Expiry & File Cleanup
 
 ### 3a. all expired sessions
 
 ```
- sessionid |     name      |      filename      |   expirytimestamp
-         3 | Rohan Gupta   | project_report.pdf | 2026-02-10 10:15:00
-         6 | Ananya Iyer   | code_snippet.py    | 2026-02-10 11:40:00
-         9 | Arjun Desai   | lab_manual.pdf     | 2026-02-10 13:15:00
-        14 | Rohan Gupta   | notes_algebra.pdf  | 2026-02-11 09:40:00
-        19 | Amit Kulkarni | ebook_chapter.pdf  | 2026-02-11 13:00:00
+ sessionid |      filename      |   expirytimestamp
+         3 | project_report.pdf | 2026-02-10 10:15:00
+         6 | code_snippet.py    | 2026-02-10 11:40:00
+         9 | lab_manual.pdf     | 2026-02-10 13:15:00
+        14 | notes_algebra.pdf  | 2026-02-11 09:40:00
+        19 | ebook_chapter.pdf  | 2026-02-11 13:00:00
 (5 rows)
 ```
 
@@ -151,7 +149,6 @@
 (10 rows)
 ```
 
-
 ## Functionality 4: Rate Limiting & Abuse Prevention
 
 ### 4a. devices that hit rate limits
@@ -187,7 +184,6 @@
  Central Library - Floor 1 | 10.0.1.101 |           3
 (1 row)
 ```
-
 
 ## Functionality 5: File Integrity Verification
 
@@ -228,7 +224,6 @@
      14 |      1
 (1 row)
 ```
-
 
 ## Functionality 6: Audit Trail & System Monitoring
 
@@ -291,29 +286,25 @@
 (5 rows)
 ```
 
-
 ## Functionality 7: Member Activity & Analytics
 
-### 7a. upload count per member
+### 7a. total data uploaded per device
 
 ```
-     name      | totaluploads
- Karthik Nair  |            2
- Rohan Gupta   |            2
- Aarav Sharma  |            2
- Vikram Singh  |            2
- Priya Patel   |            2
- Rahul Verma   |            1
- Arjun Desai   |            1
- Amit Kulkarni |            1
- Ishita Kapoor |            1
- Sneha Reddy   |            1
- Meera Joshi   |            1
- Divya Menon   |            1
- Ananya Iyer   |            1
- Neha Agarwal  |            1
- Siddharth Rao |            1
-(15 rows)
+          location          | totaldatabytes
+ Cybercafe - Hostel Block A |       24121344
+ Cybercafe - Hostel Block B |       12845056
+ Central Library - Floor 3  |        6295552
+ Central Library - Floor 2  |        6230016
+ Central Library - Floor 1  |        5450304
+ Placement Cell Office      |        4194304
+ Computer Lab A - AB1       |        4169728
+ Student Activity Center    |        3005440
+ Computer Lab C - AB2       |        2621440
+ Workshop Lab - AB3         |        2097152
+ Admin Building Lobby       |         768000
+ Computer Lab B - AB1       |         512000
+(12 rows)
 ```
 
 ### 7b. file types uploaded
@@ -345,11 +336,16 @@
 (6 rows)
 ```
 
-### 7d. members who never uploaded
+### 7d. tokens that expired without being downloaded
 
 ```
- name | email
-(0 rows)
+   tokenvalue   |      filename      |       expiryat
+ TKN-K1L2M3N4O5 | project_report.pdf | 2026-02-10 10:15:00
+ TKN-Z6A7B8C9D0 | code_snippet.py    | 2026-02-10 11:40:00
+ TKN-O1P2Q3R4S5 | lab_manual.pdf     | 2026-02-10 13:15:00
+ TKN-N6O7P8Q9R0 | notes_algebra.pdf  | 2026-02-11 09:40:00
+ TKN-M1N2O3P4Q5 | ebook_chapter.pdf  | 2026-02-11 13:00:00
+(5 rows)
 ```
 
 ### 7e. all members

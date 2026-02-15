@@ -22,18 +22,11 @@ CREATE TABLE ExpiryPolicy (
 
 CREATE TABLE UploadSession (
     sessionID INT PRIMARY KEY,
-    memberID INT NOT NULL,
     deviceID INT NOT NULL,
     policyID INT NOT NULL,
     uploadTimestamp TIMESTAMP NOT NULL,
     expiryTimestamp TIMESTAMP NOT NULL,
     status VARCHAR(20) NOT NULL CHECK (status IN ('ACTIVE','DOWNLOADED','EXPIRED')),
-    
-    CONSTRAINT fk_session_member
-        FOREIGN KEY (memberID)
-        REFERENCES Member(memberID)
-        ON DELETE RESTRICT
-        ON UPDATE CASCADE,
 
     CONSTRAINT fk_session_device
         FOREIGN KEY (deviceID)

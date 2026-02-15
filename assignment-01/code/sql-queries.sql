@@ -1,9 +1,8 @@
 -- Functionality 1: File Upload & Session Creation
 
 -- 1a. all active upload sessions
-SELECT us.sessionID, m.name, fm.fileName, us.status
+SELECT us.sessionID, fm.fileName, us.status
 FROM UploadSession us
-JOIN Member m ON us.memberID = m.memberID
 JOIN FileMetadata fm ON us.sessionID = fm.sessionID
 WHERE us.status = 'ACTIVE';
 
@@ -51,9 +50,8 @@ WHERE dl.downloadTime - us.uploadTimestamp <= INTERVAL '5 minutes';
 -- Functionality 3: Auto-Expiry & File Cleanup
 
 -- 3a. all expired sessions
-SELECT us.sessionID, m.name, fm.fileName, us.expiryTimestamp
+SELECT us.sessionID, fm.fileName, us.expiryTimestamp
 FROM UploadSession us
-JOIN Member m ON us.memberID = m.memberID
 JOIN FileMetadata fm ON us.sessionID = fm.sessionID
 WHERE us.status = 'EXPIRED';
 
@@ -155,12 +153,13 @@ ORDER BY errorCount DESC;
 
 -- Functionality 7: Member Activity & Analytics
 
--- 7a. upload count per member
-SELECT m.name, COUNT(us.sessionID) AS totalUploads
-FROM Member m
-JOIN UploadSession us ON m.memberID = us.memberID
-GROUP BY m.memberID, m.name
-ORDER BY totalUploads DESC;
+-- 7a. total data uploaded per device
+SELECT d.location, SUM(fm.fileSize) AS totalDataBytes
+FROM Device d
+JOIN UploadSession us ON d.deviceID = us.deviceID
+JOIN FileMetadata fm ON us.sessionID = fm.sessionID
+GROUP BY d.deviceID, d.location
+ORDER BY totalDataBytes DESC;
 
 -- 7b. file types uploaded
 SELECT fm.mimeType, COUNT(*) AS uploadCount
@@ -174,11 +173,12 @@ FROM UploadSession
 GROUP BY hour
 ORDER BY hour;
 
--- 7d. members who never uploaded
-SELECT m.name, m.email
-FROM Member m
-LEFT JOIN UploadSession us ON m.memberID = us.memberID
-WHERE us.sessionID IS NULL;
+-- 7d. tokens that expired without being downloaded
+SELECT ot.tokenValue, fm.fileName, ot.expiryAt
+FROM OneTimeToken ot
+JOIN UploadSession us ON ot.sessionID = us.sessionID
+JOIN FileMetadata fm ON us.sessionID = fm.sessionID
+WHERE ot.status = 'EXPIRED';
 
 -- 7e. all members
 SELECT * FROM Member;
