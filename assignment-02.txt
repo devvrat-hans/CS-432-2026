@@ -1,0 +1,150 @@
+3. Module B: Local API Development, RBAC, and Database Optimisation
+In this module, you will focus on bringing the project-specific database schemas you designed in Task 1
+to life. You will develop a web UI and secure APIs to interact with your tables, manage core system data
+locally, and implement strict Role-Based Access Control (RBAC). Finally, you will apply SQL indexing
+to optimise your database access and quantitatively measure the performance improvements of your
+queries. You are free to choose your preferred tech stack, local server environment, and directory
+structure for this assignment.
+Prerequisites
+1. Programming: Proficiency in your chosen backend language (e.g., Python, Node.js, Java) to
+implement RESTful APIs and a frontend web UI.
+2. Database Security: Understanding of authentication, session management, and Role-Based
+Access Control (RBAC).
+3. Database Optimisation: Understanding of SQL indexing strategies (e.g., B+ Trees, Hash
+indexes) and query execution profiling.
+SubTasks
+SubTask 1: Local Environment Setup Data Management
+Initialise your local database environment. You must design a system that handles both your project-specific
+tables (from Task 1) and core system data (which may include tables for members, user logins/credentials,
+and member-to-group mappings, etc, based on your project).
+• Member Creation/Deletion: When managing members, ensure corresponding entries in your
+login and group mapping tables are handled correctly to maintain strict data integrity. Do not
+duplicate core data (like user credentials) inside your project-specific tables.
+SubTask 2: API and UI Development
+Develop a web-based UI and the underlying local APIs to perform CRUD (Create, Read, Update, Delete)
+operations on your project-specific tables.
+• Ensure every API call validates the user’s session using a local authentication mechanism that
+you develop.
+• Member Portfolio: Create a portfolio feature in the UI that displays relevant details of members
+within the project. Restrict access so that only authenticated users can view this, and users can
+only view profiles they have permission to see.
+SubTask 3: Role-Based Access Control (RBAC)
+Implement strict role-based access control on your new UI and APIs:
+• Admins: Should have full access to perform administrative actions (e.g., adding/deleting records,
+managing group members across the core tables).
+• Regular Users: Should have restricted access (e.g., read-only access, or only the ability to
+modify their own specific portfolio records).
+
+CS 432 Databases (Course Projects - Track 1/Assignment 2) 7
+
+• Whenever an API call modifies data in your database, ensure the changes are logged locally to a
+file (e.g., audit.log) or a dedicated logging table.
+• Any direct database modifications made without passing through your session-validated APIs
+should be easily identifiable as unauthorized when reviewing these logs.
+SubTask 4: SQL Indexing and Query Optimisation
+Identify the most frequently accessed or slowest-performing API endpoints in your application.
+• Apply appropriate SQL indexing (e.g., single-column, composite, or unique indexes) to your
+project-specific tables to optimize data retrieval.
+• Ensure your indexing strategy directly targets the WHERE, JOIN, or ORDER BY clauses used in
+your API’s SQL queries.
+SubTask 5: Performance Benchmarking
+Quantitatively measure the impact of your SQL indexing:
+• Record the API response times and the SQL query execution times before applying your indexes.
+• Record the same metrics after applying your indexes.
+• Use query profiling tools (e.g., the EXPLAIN statement) to document how the database engine’s
+access plan changed (e.g., shifting from a full table scan to an index seek).
+SubTask 6: Video Demonstration with Audio Explanation
+Record a short screen-capture video (3–5 minutes) demonstrating your fully integrated local system.
+You must include a clear audio voice-over/explanation that walks us through your implementation.
+Your video and audio explanation must clearly cover:
+• UI & API Functionality: Narrate your navigation of the web UI, viewing the Member Portfolio,
+and successfully performing CRUD operations on your Task 1 tables.
+• RBAC Enforcement: Explain how your roles are set up while logging in as an Admin (demonstrating
+administrative access) and then as a Regular User (demonstrating restricted/read-only access).
+• Security Logging Check: Briefly explain your logging mechanism while showing your local logs
+capturing valid API operations and highlighting any flagged unauthorised database modifications.
+Note: Host the video on a platform like Google Drive or YouTube (Unlisted) and include the link in your
+report.
+
+CS 432 Databases (Course Projects - Track 1/Assignment 2) 8
+
+Evaluation Criteria
+
+Criteria Marks
+Local DB & Secure API Implementation
+(Core/Project setup, CRUD APIs, Session Validation, Member Portfolio) 20
+Security & RBAC (Role enforcement, proper deletion integrity,
+unauthorised access logging)
+
+10
+Database Optimization (Logical indexing strategy, query profiling,
+benchmarking)
+
+10
+Optimization Report (Benchmarking graphs, EXPLAIN plan analysis,
+documentation)
+
+10
+Video Submission & Audio Explanation (Clear narration and
+demonstration of UI/API functionality, RBAC constraints, and logging)
+10
+Total 60
+
+4. Submission Guidelines (Both modules)
+You are required to submit a single private GitHub repository link containing all the files for both modules.
+Please organize your repository clearly with separate folders for Module A and Module B.
+Repository Structure: Ensure your repository is structured logically.
+Example:
+CS432_Track1_Submission/
+Module_A/
+database/ (Contains bplustree.py, bruteforce.py, etc.)
+report.ipynb (Benchmarking and Visualization)
+requirements.txt
+Module_B/
+app/ (Contains API code, UI templates, auth logic)
+sql/ (Contains database creation scripts)
+logs/ (Contains audit.log)
+report.pdf (or .ipynb)
+requirements.txt
+Module A Deliverables:
+• Source Code: A database folder containing all Python scripts implementing the B+ Tree, BruteForceDB,
+and performance analyser functionalities.
+• Jupyter Notebook Report (report.ipynb): Must include:
+– Introduction: Problem statement and solution overview.
+
+
+
+API Documentation
+/login (POST)
+Description: Authenticates a user and issues a session token.
+Arguments (JSON):
+• user (string): Username.
+• password (string): User’s password.
+Returns:
+• 200 (JSON): {
+"message": "Login successful",
+session token: ’jwt session token’
+}
+• 401 (JSON):
+– {"error": "Invalid credentials"}
+– {"error": "Missing parameters"}
+on failure.
+/isAuth (GET)
+Description: Checks if a user’s session is valid.
+Arguments:
+• {
+session token: ’JWT session token’
+}
+Returns:
+• 200 (JSON): {"message": "User is authenticated", "username": string, "role": string, "expiry":
+datetime} on success.
+• 401 (JSON):
+– {"error": "No session found"}
+– {"error": "Session expired"}
+– {"error": "Invalid session token"}
+on failure.
+/ (GET)
+Description: Simple welcome endpoint.
+Arguments: None.
+Returns:
+• 200 (JSON): {"message": "Welcome to test APIs"}.
