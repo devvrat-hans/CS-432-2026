@@ -4,7 +4,7 @@
 
 ---
 
-## 📌 Module B Overview
+## Module B Overview
 
 This module transitions the theoretical database schema developed in Task 1 into a fully functional local web application. It features comprehensive REST APIs, strict Role-Based Access Control (RBAC), security audit logging, and a robust Next.js frontend UI. It also includes SQL indexing and API-level benchmarking for query optimization.
 
@@ -15,7 +15,7 @@ This module transitions the theoretical database schema developed in Task 1 into
 
 ---
 
-## 🛠 Prerequisites
+## Prerequisites
 
 Before trying to run the project, make sure these are installed on your system:
 1. **Python 3.9+**
@@ -24,7 +24,7 @@ Before trying to run the project, make sure these are installed on your system:
 
 ---
 
-## 🚀 Setup & Execution Instructions
+## Setup & Execution Instructions
 
 Since Module B requires both the backend (APIs/database) and the frontend (web UI) to run together, follow these instructions to get both components running locally.
 
@@ -85,7 +85,7 @@ Backend (`db_management_system/`):
 
 ---
 
-## 🔑 Authentication & RBAC
+## Authentication & RBAC
 
 All endpoints check for valid PyJWT authorization strictly managed by the React frontend via HTTP Bearer paths. 
 
@@ -103,7 +103,7 @@ Strict Role-Based Access Control has been implemented successfully across both t
 
 ---
 
-## ✨ Features & Subtask Details
+## Features & Subtask Details
 
 ### Member Portfolio & Core System Management (SubTask 1 & 2)
 The Next.js `/admin/members` route maps onto SQLite. Admins can successfully CRUD user records dynamically. Only properly assigned elements reflect accurately. 
@@ -117,5 +117,5 @@ Any operation involving an UPDATE, DELETE, or INSERT over the Local Database API
 
 ---
 
-## 📹 Video Demonstration
+## Video Demonstration
 A short 3-5 minute video showcasing the fully integrated system, API executions logged locally, RBAC checks, and performance benchmarking is included in the submission report.
