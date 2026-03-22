@@ -629,6 +629,20 @@ def _load_live_table_records(conn, db_name, table_name):
         ).fetchall()
         return [dict(row) for row in rows]
 
+    if table_name == "SystemAdmin":
+        rows = conn.execute(
+            """
+            SELECT
+                id AS adminID,
+                full_name AS name,
+                email
+            FROM members
+            WHERE role = 'admin'
+            ORDER BY id
+            """
+        ).fetchall()
+        return [dict(row) for row in rows]
+
     physical_name = table_name
     if not _is_safe_identifier(physical_name):
         return None
