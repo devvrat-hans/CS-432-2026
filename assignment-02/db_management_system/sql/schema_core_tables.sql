@@ -27,3 +27,47 @@ CREATE TABLE IF NOT EXISTS audit_logs (
     created_at TEXT NOT NULL,
     FOREIGN KEY(actor_id) REFERENCES members(id)
 );
+
+CREATE TABLE IF NOT EXISTS integrity_snapshots (
+    table_name TEXT PRIMARY KEY,
+    snapshot_hash TEXT NOT NULL,
+    row_count INTEGER NOT NULL,
+    updated_at TEXT NOT NULL,
+    updated_by INTEGER,
+    FOREIGN KEY(updated_by) REFERENCES members(id)
+);
+
+CREATE TABLE IF NOT EXISTS project_databases (
+    name TEXT PRIMARY KEY,
+    created_at TEXT NOT NULL,
+    created_by INTEGER,
+    FOREIGN KEY(created_by) REFERENCES members(id)
+);
+
+CREATE TABLE IF NOT EXISTS project_tables (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    database_name TEXT NOT NULL,
+    table_name TEXT NOT NULL,
+    schema_json TEXT NOT NULL,
+    search_key TEXT NOT NULL,
+    created_at TEXT NOT NULL,
+    created_by INTEGER,
+    UNIQUE(database_name, table_name),
+    FOREIGN KEY(database_name) REFERENCES project_databases(name) ON DELETE CASCADE,
+    FOREIGN KEY(created_by) REFERENCES members(id)
+);
+
+CREATE TABLE IF NOT EXISTS project_records (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    database_name TEXT NOT NULL,
+    table_name TEXT NOT NULL,
+    record_key TEXT NOT NULL,
+    payload_json TEXT NOT NULL,
+    created_at TEXT NOT NULL,
+    updated_at TEXT NOT NULL,
+    created_by INTEGER,
+    updated_by INTEGER,
+    UNIQUE(database_name, table_name, record_key),
+    FOREIGN KEY(created_by) REFERENCES members(id),
+    FOREIGN KEY(updated_by) REFERENCES members(id)
+);

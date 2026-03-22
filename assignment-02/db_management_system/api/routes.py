@@ -1,5 +1,6 @@
 import hashlib
 import json
+import logging
 import secrets
 import sqlite3
 import time
@@ -8,14 +9,23 @@ from functools import wraps
 from pathlib import Path
 
 from flask import Blueprint, Response, g, jsonify, request
-
-from database.db_manager import DatabaseManager
+from graphviz import Digraph
 
 api = Blueprint("api", __name__)
-db_manager = DatabaseManager()
 
 DB_PATH = Path(__file__).resolve().parent.parent / "module_b.sqlite3"
+PROJECT_SCHEMA_PATH = Path(__file__).resolve().parent.parent / "sql" / "schema_project_tables.sql"
+AUDIT_LOG_PATH = Path(__file__).resolve().parent.parent / "logs" / "audit.log"
 SESSION_HOURS = 8
+
+AUDIT_LOG_PATH.parent.mkdir(parents=True, exist_ok=True)
+audit_logger = logging.getLogger("blinddrop.audit")
+if not audit_logger.handlers:
+    audit_logger.setLevel(logging.INFO)
+    file_handler = logging.FileHandler(AUDIT_LOG_PATH, encoding="utf-8")
+    file_handler.setFormatter(logging.Formatter("%(message)s"))
+    audit_logger.addHandler(file_handler)
+    audit_logger.propagate = False
 
 
 def _now_iso():
@@ -32,6 +42,13 @@ def _db_conn():
     return conn
 
 
+def _compute_snapshot(rows):
+    payload = [dict(row) for row in rows]
+    encoded = json.dumps(payload, sort_keys=True, separators=(",", ":"))
+    snapshot_hash = hashlib.sha256(encoded.encode("utf-8")).hexdigest()
+    return snapshot_hash, len(payload)
+
+
 def _compute_members_snapshot(conn):
     rows = conn.execute(
         """
@@ -40,18 +57,35 @@ def _compute_members_snapshot(conn):
         ORDER BY id
         """
     ).fetchall()
-    payload = [dict(row) for row in rows]
-    encoded = json.dumps(payload, sort_keys=True, separators=(",", ":"))
-    snapshot_hash = hashlib.sha256(encoded.encode("utf-8")).hexdigest()
-    return snapshot_hash, len(payload)
+    return _compute_snapshot(rows)
+
+
+def _compute_project_records_snapshot(conn):
+    rows = conn.execute(
+        """
+        SELECT id, database_name, table_name, record_key, payload_json, created_at, updated_at
+        FROM project_records
+        ORDER BY id
+        """
+    ).fetchall()
+    return _compute_snapshot(rows)
 
 
 def _refresh_members_integrity_snapshot(conn, actor_id=None):
     snapshot_hash, row_count = _compute_members_snapshot(conn)
+    _upsert_integrity_snapshot(conn, "members", snapshot_hash, row_count, actor_id)
+
+
+def _refresh_project_records_integrity_snapshot(conn, actor_id=None):
+    snapshot_hash, row_count = _compute_project_records_snapshot(conn)
+    _upsert_integrity_snapshot(conn, "project_records", snapshot_hash, row_count, actor_id)
+
+
+def _upsert_integrity_snapshot(conn, table_name, snapshot_hash, row_count, actor_id=None):
     conn.execute(
         """
         INSERT INTO integrity_snapshots (table_name, snapshot_hash, row_count, updated_at, updated_by)
-        VALUES ('members', ?, ?, ?, ?)
+        VALUES (?, ?, ?, ?, ?)
         ON CONFLICT(table_name)
         DO UPDATE SET
             snapshot_hash = excluded.snapshot_hash,
@@ -59,7 +93,7 @@ def _refresh_members_integrity_snapshot(conn, actor_id=None):
             updated_at = excluded.updated_at,
             updated_by = excluded.updated_by
         """,
-        (snapshot_hash, row_count, _now_iso(), actor_id),
+        (table_name, snapshot_hash, row_count, _now_iso(), actor_id),
     )
 
 
@@ -130,6 +164,91 @@ def _init_module_b_db():
         cursor.execute(
             "CREATE INDEX IF NOT EXISTS idx_audit_created ON audit_logs(created_at)"
         )
+        cursor.execute(
+            """
+            CREATE TABLE IF NOT EXISTS project_databases (
+                name TEXT PRIMARY KEY,
+                created_at TEXT NOT NULL,
+                created_by INTEGER,
+                FOREIGN KEY(created_by) REFERENCES members(id)
+            )
+            """
+        )
+        cursor.execute(
+            """
+            CREATE TABLE IF NOT EXISTS project_tables (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                database_name TEXT NOT NULL,
+                table_name TEXT NOT NULL,
+                schema_json TEXT NOT NULL,
+                search_key TEXT NOT NULL,
+                created_at TEXT NOT NULL,
+                created_by INTEGER,
+                UNIQUE(database_name, table_name),
+                FOREIGN KEY(database_name) REFERENCES project_databases(name) ON DELETE CASCADE,
+                FOREIGN KEY(created_by) REFERENCES members(id)
+            )
+            """
+        )
+        cursor.execute(
+            """
+            CREATE TABLE IF NOT EXISTS project_records (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                database_name TEXT NOT NULL,
+                table_name TEXT NOT NULL,
+                record_key TEXT NOT NULL,
+                payload_json TEXT NOT NULL,
+                created_at TEXT NOT NULL,
+                updated_at TEXT NOT NULL,
+                created_by INTEGER,
+                updated_by INTEGER,
+                UNIQUE(database_name, table_name, record_key),
+                FOREIGN KEY(created_by) REFERENCES members(id),
+                FOREIGN KEY(updated_by) REFERENCES members(id)
+            )
+            """
+        )
+        cursor.execute(
+            "CREATE INDEX IF NOT EXISTS idx_project_tables_db ON project_tables(database_name)"
+        )
+        cursor.execute(
+            "CREATE INDEX IF NOT EXISTS idx_project_records_table ON project_records(database_name, table_name)"
+        )
+        cursor.execute(
+            "CREATE INDEX IF NOT EXISTS idx_project_records_key ON project_records(database_name, table_name, record_key)"
+        )
+        if PROJECT_SCHEMA_PATH.exists():
+            conn.executescript(PROJECT_SCHEMA_PATH.read_text(encoding="utf-8"))
+        cursor.execute(
+            "CREATE INDEX IF NOT EXISTS idx_uploadsession_device ON UploadSession(deviceID)"
+        )
+        cursor.execute(
+            "CREATE INDEX IF NOT EXISTS idx_uploadsession_policy ON UploadSession(policyID)"
+        )
+        cursor.execute(
+            "CREATE INDEX IF NOT EXISTS idx_uploadsession_status ON UploadSession(status)"
+        )
+        cursor.execute(
+            "CREATE INDEX IF NOT EXISTS idx_filemetadata_session ON FileMetadata(sessionID)"
+        )
+        cursor.execute(
+            "CREATE INDEX IF NOT EXISTS idx_onetimetoken_session ON OneTimeToken(sessionID)"
+        )
+        cursor.execute(
+            "CREATE INDEX IF NOT EXISTS idx_onetimetoken_tokenvalue ON OneTimeToken(tokenValue)"
+        )
+        cursor.execute(
+            "CREATE INDEX IF NOT EXISTS idx_downloadlog_token ON DownloadLog(tokenID)"
+        )
+        cursor.execute(
+            "CREATE INDEX IF NOT EXISTS idx_downloadlog_time ON DownloadLog(downloadTime)"
+        )
+        cursor.execute(
+            "CREATE INDEX IF NOT EXISTS idx_ratelimit_device ON RateLimitLog(deviceID)"
+        )
+        cursor.execute(
+            "CREATE INDEX IF NOT EXISTS idx_ratelimit_time ON RateLimitLog(timestamp)"
+        )
 
         admin_exists = cursor.execute(
             "SELECT id FROM members WHERE username = ?", ("admin",)
@@ -151,12 +270,28 @@ def _init_module_b_db():
             )
 
         _refresh_members_integrity_snapshot(conn, actor_id=admin_exists["id"] if admin_exists else None)
+        _refresh_project_records_integrity_snapshot(conn, actor_id=admin_exists["id"] if admin_exists else None)
         conn.commit()
     finally:
         conn.close()
 
 
 def _write_audit(action, target, status, actor_id=None, details=None):
+    now = _now_iso()
+    audit_logger.info(
+        json.dumps(
+            {
+                "created_at": now,
+                "actor_id": actor_id,
+                "action": action,
+                "target": target,
+                "status": status,
+                "details": details,
+            },
+            ensure_ascii=True,
+        )
+    )
+
     conn = _db_conn()
     try:
         conn.execute(
@@ -164,7 +299,7 @@ def _write_audit(action, target, status, actor_id=None, details=None):
             INSERT INTO audit_logs (actor_id, action, target, status, details, created_at)
             VALUES (?, ?, ?, ?, ?, ?)
             """,
-            (actor_id, action, target, status, details, _now_iso()),
+            (actor_id, action, target, status, details, now),
         )
         conn.commit()
     finally:
@@ -214,6 +349,7 @@ def require_session(handler):
             "full_name": row["full_name"],
             "email": row["email"],
             "member_group": row["member_group"],
+            "expires_at": row["expires_at"],
             "token": row["token"],
         }
         return handler(*args, **kwargs)
@@ -242,35 +378,32 @@ def require_admin(handler):
 _init_module_b_db()
 
 
-def _bootstrap_inmemory_db():
-    if db_manager.list_databases():
-        return
-
-    db_manager.create_database("blinddrop_core")
-    db_manager.create_table(
-        "blinddrop_core",
-        "member_cache",
-        ["id", "full_name", "role"],
-        search_key="id",
-    )
-    table, _ = db_manager.get_table("blinddrop_core", "member_cache")
-    table.insert({"id": 1, "full_name": "System Admin", "role": "admin"})
-
-    db_manager.create_table("blinddrop_core", "Member", ["memberID", "name", "age", "image", "email", "contactNumber"], search_key="memberID")
-    db_manager.create_table("blinddrop_core", "Device", ["deviceID", "location", "deviceType", "ipAddress"], search_key="deviceID")
-    db_manager.create_table("blinddrop_core", "ExpiryPolicy", ["policyID", "maxLifetimeMinutes", "deleteAfterFirstDownload"], search_key="policyID")
-    db_manager.create_table("blinddrop_core", "UploadSession", ["sessionID", "deviceID", "policyID", "uploadTimestamp", "expiryTimestamp", "status"], search_key="sessionID")
-    db_manager.create_table("blinddrop_core", "FileMetadata", ["fileID", "sessionID", "fileName", "fileSize", "mimeType", "checksum", "storagePath"], search_key="fileID")
-    db_manager.create_table("blinddrop_core", "OneTimeToken", ["tokenID", "sessionID", "tokenValue", "createdAt", "expiryAt", "status"], search_key="tokenID")
-    db_manager.create_table("blinddrop_core", "DownloadLog", ["downloadID", "tokenID", "downloadTime", "userDeviceInfo"], search_key="downloadID")
-    db_manager.create_table("blinddrop_core", "RateLimitLog", ["requestID", "deviceID", "timestamp", "eventType"], search_key="requestID")
-    db_manager.create_table("blinddrop_core", "FileIntegrityCheck", ["checkID", "fileID", "computedChecksum", "verified", "timestamp"], search_key="checkID")
-    db_manager.create_table("blinddrop_core", "SystemAdmin", ["adminID", "name", "email"], search_key="adminID")
-    db_manager.create_table("blinddrop_core", "ErrorLog", ["errorID", "sessionID", "errorMessage", "timestamp"], search_key="errorID")
-    db_manager.create_table("blinddrop_core", "AuditTrail", ["auditID", "action", "sessionID", "timestamp"], search_key="auditID")
+def _table_meta(conn, db_name, table_name):
+    return conn.execute(
+        """
+        SELECT database_name, table_name, schema_json, search_key
+        FROM project_tables
+        WHERE database_name = ? AND table_name = ?
+        """,
+        (db_name, table_name),
+    ).fetchone()
 
 
-_bootstrap_inmemory_db()
+def _record_key_sort(value):
+    text = str(value)
+    try:
+        return (0, float(text))
+    except ValueError:
+        return (1, text)
+
+
+def _extract_record_key(record, search_key):
+    if search_key in record:
+        return str(record[search_key])
+    if "id" in record:
+        return str(record["id"])
+    first_key = next(iter(record), None)
+    return str(record[first_key]) if first_key is not None else None
 
 
 @api.route("/auth/login", methods=["POST"])
@@ -525,14 +658,18 @@ def get_audit_logs():
 def check_integrity():
     conn = _db_conn()
     try:
-        saved = conn.execute(
+        saved_members = conn.execute(
             "SELECT table_name, snapshot_hash, row_count, updated_at, updated_by FROM integrity_snapshots WHERE table_name = 'members'"
         ).fetchone()
-        current_hash, current_count = _compute_members_snapshot(conn)
+        current_members_hash, current_members_count = _compute_members_snapshot(conn)
+        saved_project_records = conn.execute(
+            "SELECT table_name, snapshot_hash, row_count, updated_at, updated_by FROM integrity_snapshots WHERE table_name = 'project_records'"
+        ).fetchone()
+        current_project_hash, current_project_count = _compute_project_records_snapshot(conn)
     finally:
         conn.close()
 
-    if saved is None:
+    if saved_members is None:
         _write_audit(
             "integrity_check",
             "members",
@@ -540,17 +677,27 @@ def check_integrity():
             g.current_member["id"],
             "No baseline snapshot available",
         )
-        return jsonify(
-            {
-                "table": "members",
-                "status": "warning",
-                "authorized": False,
-                "message": "No baseline snapshot available. Initialize via API activity.",
-            }
+    if saved_project_records is None:
+        _write_audit(
+            "integrity_check",
+            "project_records",
+            "warning",
+            g.current_member["id"],
+            "No baseline snapshot available",
         )
 
-    authorized = saved["snapshot_hash"] == current_hash and saved["row_count"] == current_count
-    if not authorized:
+    members_authorized = (
+        saved_members is not None
+        and saved_members["snapshot_hash"] == current_members_hash
+        and saved_members["row_count"] == current_members_count
+    )
+    project_authorized = (
+        saved_project_records is not None
+        and saved_project_records["snapshot_hash"] == current_project_hash
+        and saved_project_records["row_count"] == current_project_count
+    )
+
+    if saved_members is not None and not members_authorized:
         _write_audit(
             "direct_db_modification_detected",
             "members",
@@ -558,28 +705,62 @@ def check_integrity():
             g.current_member["id"],
             json.dumps(
                 {
-                    "saved_hash": saved["snapshot_hash"],
-                    "current_hash": current_hash,
-                    "saved_row_count": saved["row_count"],
-                    "current_row_count": current_count,
+                    "saved_hash": saved_members["snapshot_hash"],
+                    "current_hash": current_members_hash,
+                    "saved_row_count": saved_members["row_count"],
+                    "current_row_count": current_members_count,
+                }
+            ),
+        )
+    if saved_project_records is not None and not project_authorized:
+        _write_audit(
+            "direct_db_modification_detected",
+            "project_records",
+            "unauthorized",
+            g.current_member["id"],
+            json.dumps(
+                {
+                    "saved_hash": saved_project_records["snapshot_hash"],
+                    "current_hash": current_project_hash,
+                    "saved_row_count": saved_project_records["row_count"],
+                    "current_row_count": current_project_count,
                 }
             ),
         )
 
+    overall_authorized = members_authorized and project_authorized
+
     return jsonify(
         {
-            "table": "members",
-            "status": "ok" if authorized else "unauthorized",
-            "authorized": authorized,
-            "baseline": {
-                "hash": saved["snapshot_hash"],
-                "row_count": saved["row_count"],
-                "updated_at": saved["updated_at"],
-                "updated_by": saved["updated_by"],
-            },
-            "current": {
-                "hash": current_hash,
-                "row_count": current_count,
+            "status": "ok" if overall_authorized else "unauthorized",
+            "authorized": overall_authorized,
+            "tables": {
+                "members": {
+                    "authorized": members_authorized,
+                    "baseline": {
+                        "hash": saved_members["snapshot_hash"] if saved_members else None,
+                        "row_count": saved_members["row_count"] if saved_members else None,
+                        "updated_at": saved_members["updated_at"] if saved_members else None,
+                        "updated_by": saved_members["updated_by"] if saved_members else None,
+                    },
+                    "current": {
+                        "hash": current_members_hash,
+                        "row_count": current_members_count,
+                    },
+                },
+                "project_records": {
+                    "authorized": project_authorized,
+                    "baseline": {
+                        "hash": saved_project_records["snapshot_hash"] if saved_project_records else None,
+                        "row_count": saved_project_records["row_count"] if saved_project_records else None,
+                        "updated_at": saved_project_records["updated_at"] if saved_project_records else None,
+                        "updated_by": saved_project_records["updated_by"] if saved_project_records else None,
+                    },
+                    "current": {
+                        "hash": current_project_hash,
+                        "row_count": current_project_count,
+                    },
+                },
             },
         }
     )
@@ -693,29 +874,139 @@ def benchmark_index_comparison():
     )
 
 
+@api.route("/indexing/project-explain", methods=["GET"])
+@require_admin
+def explain_project_lookup():
+    conn = _db_conn()
+    try:
+        query = "SELECT sessionID, deviceID, status FROM UploadSession WHERE status = ?"
+        rows = conn.execute(f"EXPLAIN QUERY PLAN {query}", ("ACTIVE",)).fetchall()
+    finally:
+        conn.close()
+    return jsonify({"query": query, "plan": [dict(r) for r in rows]})
+
+
+@api.route("/indexing/project-benchmark-comparison", methods=["GET"])
+@require_admin
+def benchmark_project_index_comparison():
+    iterations = request.args.get("iterations", default=1000, type=int)
+    iterations = min(max(iterations, 10), 20000)
+
+    conn = _db_conn()
+    try:
+        start = time.perf_counter()
+        for _ in range(iterations):
+            conn.execute(
+                "SELECT sessionID, deviceID, status FROM UploadSession NOT INDEXED WHERE status = ?",
+                ("ACTIVE",),
+            ).fetchall()
+        no_index = time.perf_counter() - start
+
+        start = time.perf_counter()
+        for _ in range(iterations):
+            conn.execute(
+                "SELECT sessionID, deviceID, status FROM UploadSession INDEXED BY idx_uploadsession_status WHERE status = ?",
+                ("ACTIVE",),
+            ).fetchall()
+        with_index = time.perf_counter() - start
+    finally:
+        conn.close()
+
+    return jsonify(
+        {
+            "query": "UploadSession lookup by status",
+            "iterations": iterations,
+            "without_index": {
+                "total_seconds": no_index,
+                "avg_ms": (no_index / iterations) * 1000,
+            },
+            "with_index": {
+                "total_seconds": with_index,
+                "avg_ms": (with_index / iterations) * 1000,
+            },
+            "improvement_percent": ((no_index - with_index) / no_index * 100) if no_index > 0 else 0,
+        }
+    )
+
+
+@api.route("/indexing/dashboard-benchmark-comparison", methods=["GET"])
+@require_admin
+def benchmark_dashboard_summary_comparison():
+    iterations = request.args.get("iterations", default=1000, type=int)
+    iterations = min(max(iterations, 10), 20000)
+
+    conn = _db_conn()
+    try:
+        start = time.perf_counter()
+        for _ in range(iterations):
+            conn.execute("SELECT COUNT(*) AS count FROM project_databases NOT INDEXED").fetchone()["count"]
+            conn.execute("SELECT COUNT(*) AS count FROM project_tables NOT INDEXED").fetchone()["count"]
+            conn.execute("SELECT COUNT(*) AS count FROM members NOT INDEXED").fetchone()["count"]
+            conn.execute("SELECT COUNT(*) AS count FROM audit_logs NOT INDEXED").fetchone()["count"]
+        without_index = time.perf_counter() - start
+
+        start = time.perf_counter()
+        for _ in range(iterations):
+            conn.execute("SELECT COUNT(*) AS count FROM project_databases").fetchone()["count"]
+            conn.execute("SELECT COUNT(*) AS count FROM project_tables INDEXED BY idx_project_tables_db").fetchone()["count"]
+            conn.execute("SELECT COUNT(*) AS count FROM members INDEXED BY idx_members_role").fetchone()["count"]
+            conn.execute("SELECT COUNT(*) AS count FROM audit_logs INDEXED BY idx_audit_created").fetchone()["count"]
+        with_index = time.perf_counter() - start
+    finally:
+        conn.close()
+
+    return jsonify(
+        {
+            "query": "dashboard summary aggregate counts",
+            "iterations": iterations,
+            "without_index": {
+                "total_seconds": without_index,
+                "avg_ms": (without_index / iterations) * 1000,
+            },
+            "with_index": {
+                "total_seconds": with_index,
+                "avg_ms": (with_index / iterations) * 1000,
+            },
+            "improvement_percent": ((without_index - with_index) / without_index * 100) if without_index > 0 else 0,
+            "note": "COUNT(*) summary queries are aggregation-heavy; index impact may be limited compared to filtered lookups.",
+        }
+    )
+
+
 @api.route('/databases', methods=['GET'])
 @require_admin
 def get_databases():
-    databases = db_manager.list_databases()
+    conn = _db_conn()
+    try:
+        rows = conn.execute("SELECT name FROM project_databases ORDER BY name").fetchall()
+    finally:
+        conn.close()
+    databases = [row["name"] for row in rows]
     return jsonify({"databases": databases, "count": len(databases)})
 
 
 @api.route('/databases/catalog', methods=['GET'])
 @require_admin
 def get_databases_catalog():
-    databases = db_manager.list_databases()
-    catalog = []
-
-    for db_name in databases:
-        tables, _ = db_manager.list_tables(db_name)
-        table_names = tables or []
-        catalog.append(
-            {
-                "name": db_name,
-                "table_count": len(table_names),
-                "tables": table_names,
-            }
-        )
+    conn = _db_conn()
+    try:
+        db_rows = conn.execute("SELECT name FROM project_databases ORDER BY name").fetchall()
+        catalog = []
+        for db_row in db_rows:
+            table_rows = conn.execute(
+                "SELECT table_name FROM project_tables WHERE database_name = ? ORDER BY table_name",
+                (db_row["name"],),
+            ).fetchall()
+            table_names = [table_row["table_name"] for table_row in table_rows]
+            catalog.append(
+                {
+                    "name": db_row["name"],
+                    "table_count": len(table_names),
+                    "tables": table_names,
+                }
+            )
+    finally:
+        conn.close()
 
     return jsonify({"catalog": catalog, "count": len(catalog)})
 
@@ -723,16 +1014,10 @@ def get_databases_catalog():
 @api.route('/dashboard/summary', methods=['GET'])
 @require_admin
 def dashboard_summary():
-    databases = db_manager.list_databases()
-    total_tables = 0
-
-    for db_name in databases:
-        tables, _ = db_manager.list_tables(db_name)
-        if tables is not None:
-            total_tables += len(tables)
-
     conn = _db_conn()
     try:
+        database_count = conn.execute("SELECT COUNT(*) AS count FROM project_databases").fetchone()["count"]
+        table_count = conn.execute("SELECT COUNT(*) AS count FROM project_tables").fetchone()["count"]
         member_count = conn.execute("SELECT COUNT(*) AS count FROM members").fetchone()["count"]
         audit_count = conn.execute("SELECT COUNT(*) AS count FROM audit_logs").fetchone()["count"]
     finally:
@@ -740,8 +1025,8 @@ def dashboard_summary():
 
     return jsonify(
         {
-            "database_count": len(databases),
-            "table_count": total_tables,
+            "database_count": database_count,
+            "table_count": table_count,
             "member_count": member_count,
             "audit_count": audit_count,
         }
@@ -752,186 +1037,406 @@ def dashboard_summary():
 @require_admin
 def create_database():
     data = request.get_json(silent=True) or {}
-    if 'name' not in data:
+    name = (data.get('name') or '').strip()
+    if not name:
         return jsonify({"error": "Database name is required"}), 400
 
-    success, message = db_manager.create_database(data['name'])
+    conn = _db_conn()
+    try:
+        conn.execute(
+            "INSERT INTO project_databases (name, created_at, created_by) VALUES (?, ?, ?)",
+            (name, _now_iso(), g.current_member["id"]),
+        )
+        conn.commit()
+    except sqlite3.IntegrityError:
+        return jsonify({"error": "Database already exists"}), 400
+    finally:
+        conn.close()
+
     _write_audit(
         "create_database",
         "dbms",
-        "success" if success else "failed",
+        "success",
         g.current_member["id"],
-        json.dumps({"database": data['name']}),
+        json.dumps({"database": name}),
     )
-    if success:
-        return jsonify({"message": message}), 201
-    return jsonify({"error": message}), 400
+    return jsonify({"message": "Database created successfully"}), 201
 
 
 @api.route('/databases/<db_name>', methods=['DELETE'])
 @require_admin
 def delete_database(db_name):
-    success, message = db_manager.delete_database(db_name)
+    conn = _db_conn()
+    try:
+        conn.execute("DELETE FROM project_records WHERE database_name = ?", (db_name,))
+        conn.execute("DELETE FROM project_tables WHERE database_name = ?", (db_name,))
+        cursor = conn.execute("DELETE FROM project_databases WHERE name = ?", (db_name,))
+        _refresh_project_records_integrity_snapshot(conn, actor_id=g.current_member["id"])
+        conn.commit()
+        deleted = cursor.rowcount > 0
+    finally:
+        conn.close()
+
     _write_audit(
         "delete_database",
         "dbms",
-        "success" if success else "failed",
+        "success" if deleted else "failed",
         g.current_member["id"],
         json.dumps({"database": db_name}),
     )
-    if success:
-        return jsonify({"message": message}), 200
-    return jsonify({"error": message}), 404
+    if deleted:
+        return jsonify({"message": "Database deleted successfully"}), 200
+    return jsonify({"error": "Database not found"}), 404
 
 
 @api.route('/databases/<db_name>/tables', methods=['GET'])
 @require_session
 def get_tables(db_name):
-    tables, message = db_manager.list_tables(db_name)
-    if tables is not None:
-        return jsonify({"tables": tables, "count": len(tables)})
-    return jsonify({"error": message}), 404
+    conn = _db_conn()
+    try:
+        db_exists = conn.execute(
+            "SELECT 1 FROM project_databases WHERE name = ?",
+            (db_name,),
+        ).fetchone()
+        if db_exists is None:
+            return jsonify({"error": "Database not found"}), 404
+
+        rows = conn.execute(
+            "SELECT table_name FROM project_tables WHERE database_name = ? ORDER BY table_name",
+            (db_name,),
+        ).fetchall()
+    finally:
+        conn.close()
+
+    tables = [row["table_name"] for row in rows]
+    return jsonify({"tables": tables, "count": len(tables)})
 
 
 @api.route('/databases/<db_name>/tables', methods=['POST'])
-@require_session
+@require_admin
 def create_table(db_name):
     data = request.get_json(silent=True) or {}
-    if 'name' not in data or 'schema' not in data:
+    table_name = (data.get('name') or '').strip()
+    schema = data.get('schema')
+
+    if not table_name or not isinstance(schema, list) or not schema:
         return jsonify({"error": "Table name and schema are required"}), 400
 
-    success, message = db_manager.create_table(db_name, data['name'], data['schema'])
+    cleaned_schema = [str(item).strip() for item in schema if str(item).strip()]
+    if not cleaned_schema:
+        return jsonify({"error": "Schema must contain at least one column"}), 400
+
+    search_key = (data.get('search_key') or cleaned_schema[0]).strip()
+    if search_key not in cleaned_schema:
+        return jsonify({"error": "Search key must be part of schema"}), 400
+
+    conn = _db_conn()
+    try:
+        db_exists = conn.execute(
+            "SELECT 1 FROM project_databases WHERE name = ?",
+            (db_name,),
+        ).fetchone()
+        if db_exists is None:
+            return jsonify({"error": "Database not found"}), 404
+
+        conn.execute(
+            """
+            INSERT INTO project_tables (database_name, table_name, schema_json, search_key, created_at, created_by)
+            VALUES (?, ?, ?, ?, ?, ?)
+            """,
+            (
+                db_name,
+                table_name,
+                json.dumps(cleaned_schema),
+                search_key,
+                _now_iso(),
+                g.current_member["id"],
+            ),
+        )
+        conn.commit()
+    except sqlite3.IntegrityError:
+        return jsonify({"error": "Table already exists"}), 400
+    finally:
+        conn.close()
+
     _write_audit(
         "create_table",
         "dbms",
-        "success" if success else "failed",
+        "success",
         g.current_member["id"],
-        json.dumps({"database": db_name, "table": data['name']}),
+        json.dumps({"database": db_name, "table": table_name}),
     )
-    if success:
-        return jsonify({"message": message}), 201
-    return jsonify({"error": message}), 400
+    return jsonify({"message": "Table created successfully"}), 201
 
 
 @api.route('/databases/<db_name>/tables/<table_name>', methods=['DELETE'])
 @require_admin
 def delete_table(db_name, table_name):
-    success, message = db_manager.delete_table(db_name, table_name)
+    conn = _db_conn()
+    try:
+        conn.execute(
+            "DELETE FROM project_records WHERE database_name = ? AND table_name = ?",
+            (db_name, table_name),
+        )
+        cursor = conn.execute(
+            "DELETE FROM project_tables WHERE database_name = ? AND table_name = ?",
+            (db_name, table_name),
+        )
+        _refresh_project_records_integrity_snapshot(conn, actor_id=g.current_member["id"])
+        conn.commit()
+        deleted = cursor.rowcount > 0
+    finally:
+        conn.close()
+
     _write_audit(
         "delete_table",
         "dbms",
-        "success" if success else "failed",
+        "success" if deleted else "failed",
         g.current_member["id"],
         json.dumps({"database": db_name, "table": table_name}),
     )
-    if success:
-        return jsonify({"message": message}), 200
-    return jsonify({"error": message}), 404
+    if deleted:
+        return jsonify({"message": "Table deleted successfully"}), 200
+    return jsonify({"error": "Table not found"}), 404
 
 
 @api.route('/databases/<db_name>/tables/<table_name>/records', methods=['GET'])
 @require_session
 def get_records(db_name, table_name):
-    table, message = db_manager.get_table(db_name, table_name)
-    if table is None:
-        return jsonify({"error": message}), 404
+    conn = _db_conn()
+    try:
+        meta = _table_meta(conn, db_name, table_name)
+        if meta is None:
+            return jsonify({"error": "Table not found"}), 404
 
-    records, _ = table.get_all()
-    formatted_records = [{"data": record_data} for record_data in records]
+        rows = conn.execute(
+            """
+            SELECT payload_json
+            FROM project_records
+            WHERE database_name = ? AND table_name = ?
+            ORDER BY record_key
+            """,
+            (db_name, table_name),
+        ).fetchall()
+    finally:
+        conn.close()
+
+    formatted_records = [{"data": json.loads(row["payload_json"])} for row in rows]
     return jsonify({"records": formatted_records, "count": len(formatted_records)})
 
 
 @api.route('/databases/<db_name>/tables/<table_name>/records', methods=['POST'])
-@require_session
+@require_admin
 def create_record(db_name, table_name):
     data = request.get_json(silent=True)
     if not data:
         return jsonify({"error": "Record data is required"}), 400
 
-    table, message = db_manager.get_table(db_name, table_name)
-    if table is None:
-        return jsonify({"error": message}), 404
+    conn = _db_conn()
+    try:
+        meta = _table_meta(conn, db_name, table_name)
+        if meta is None:
+            return jsonify({"error": "Table not found"}), 404
 
-    if isinstance(data, list):
-        results = []
-        for record in data:
-            success, result = table.insert(record)
-            results.append({"status": "success" if success else "failed", "result": result})
-        status = "success" if any(r["status"] == "success" for r in results) else "failed"
-        _write_audit("insert_records", "dbms", status, g.current_member["id"], json.dumps({"database": db_name, "table": table_name, "count": len(data)}))
-        return jsonify({"message": f"Processed {len(data)} records", "results": results}), 201
+        search_key = meta["search_key"]
+        now = _now_iso()
 
-    success, result = table.insert(data)
+        if isinstance(data, list):
+            results = []
+            success_count = 0
+            for record in data:
+                if not isinstance(record, dict):
+                    results.append({"status": "failed", "result": "Each record must be an object"})
+                    continue
+                record_key = _extract_record_key(record, search_key)
+                if record_key is None:
+                    results.append({"status": "failed", "result": f"Missing search key '{search_key}'"})
+                    continue
+                try:
+                    conn.execute(
+                        """
+                        INSERT INTO project_records
+                        (database_name, table_name, record_key, payload_json, created_at, updated_at, created_by, updated_by)
+                        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                        """,
+                        (
+                            db_name,
+                            table_name,
+                            record_key,
+                            json.dumps(record),
+                            now,
+                            now,
+                            g.current_member["id"],
+                            g.current_member["id"],
+                        ),
+                    )
+                    results.append({"status": "success", "result": record_key})
+                    success_count += 1
+                except sqlite3.IntegrityError:
+                    results.append({"status": "failed", "result": f"Duplicate record key '{record_key}'"})
+
+            if success_count:
+                _refresh_project_records_integrity_snapshot(conn, actor_id=g.current_member["id"])
+            conn.commit()
+            status = "success" if success_count else "failed"
+            _write_audit("insert_records", "dbms", status, g.current_member["id"], json.dumps({"database": db_name, "table": table_name, "count": len(data)}))
+            if success_count:
+                return jsonify({"message": f"Processed {len(data)} records", "results": results}), 201
+            return jsonify({"error": "No records inserted", "results": results}), 400
+
+        if not isinstance(data, dict):
+            return jsonify({"error": "Record data must be an object or list of objects"}), 400
+
+        record_key = _extract_record_key(data, search_key)
+        if record_key is None:
+            return jsonify({"error": f"Missing search key '{search_key}'"}), 400
+
+        conn.execute(
+            """
+            INSERT INTO project_records
+            (database_name, table_name, record_key, payload_json, created_at, updated_at, created_by, updated_by)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            """,
+            (
+                db_name,
+                table_name,
+                record_key,
+                json.dumps(data),
+                now,
+                now,
+                g.current_member["id"],
+                g.current_member["id"],
+            ),
+        )
+        _refresh_project_records_integrity_snapshot(conn, actor_id=g.current_member["id"])
+        conn.commit()
+    except sqlite3.IntegrityError:
+        return jsonify({"error": "Record already exists"}), 400
+    finally:
+        conn.close()
+
     _write_audit(
         "insert_record",
         "dbms",
-        "success" if success else "failed",
+        "success",
         g.current_member["id"],
-        json.dumps({"database": db_name, "table": table_name}),
+        json.dumps({"database": db_name, "table": table_name, "record_id": record_key}),
     )
-    if success:
-        return jsonify({"message": "Record created successfully", "result": result}), 201
-    return jsonify({"error": result}), 400
+    return jsonify({"message": "Record created successfully", "result": record_key}), 201
 
 
 @api.route('/databases/<db_name>/tables/<table_name>/records/<record_id>', methods=['GET'])
 @require_session
 def get_record(db_name, table_name, record_id):
+    conn = _db_conn()
     try:
-        table, message = db_manager.get_table(db_name, table_name)
-        if table is None:
-            return jsonify({"error": message}), 404
+        row = conn.execute(
+            """
+            SELECT payload_json
+            FROM project_records
+            WHERE database_name = ? AND table_name = ? AND record_key = ?
+            """,
+            (db_name, table_name, record_id),
+        ).fetchone()
+    finally:
+        conn.close()
 
-        record, _ = table.get(record_id)
-        if record:
-            return jsonify({"id": record_id, "data": record})
+    if row is None:
         return jsonify({"error": "Record not found"}), 404
-    except Exception as exc:
-        return jsonify({"error": f"Internal server error: {str(exc)}"}), 500
+    return jsonify({"id": record_id, "data": json.loads(row["payload_json"])})
 
 
 @api.route('/databases/<db_name>/tables/<table_name>/records/<record_id>', methods=['PUT'])
-@require_session
+@require_admin
 def update_record(db_name, table_name, record_id):
     data = request.get_json(silent=True)
-    if not data:
+    if not isinstance(data, dict) or not data:
         return jsonify({"error": "Record data is required"}), 400
 
-    table, message = db_manager.get_table(db_name, table_name)
-    if table is None:
-        return jsonify({"error": message}), 404
+    conn = _db_conn()
+    try:
+        meta = _table_meta(conn, db_name, table_name)
+        if meta is None:
+            return jsonify({"error": "Table not found"}), 404
 
-    success, result_message = table.update(record_id, data)
+        search_key = meta["search_key"]
+        existing = conn.execute(
+            """
+            SELECT payload_json
+            FROM project_records
+            WHERE database_name = ? AND table_name = ? AND record_key = ?
+            """,
+            (db_name, table_name, record_id),
+        ).fetchone()
+        if existing is None:
+            return jsonify({"error": "Record not found"}), 404
+
+        payload = json.loads(existing["payload_json"])
+        payload.update(data)
+        new_record_key = _extract_record_key(payload, search_key)
+        if new_record_key is None:
+            return jsonify({"error": f"Missing search key '{search_key}'"}), 400
+        if new_record_key != str(record_id):
+            return jsonify({"error": "Changing record key is not supported"}), 400
+
+        cursor = conn.execute(
+            """
+            UPDATE project_records
+            SET payload_json = ?, updated_at = ?, updated_by = ?
+            WHERE database_name = ? AND table_name = ? AND record_key = ?
+            """,
+            (
+                json.dumps(payload),
+                _now_iso(),
+                g.current_member["id"],
+                db_name,
+                table_name,
+                record_id,
+            ),
+        )
+        _refresh_project_records_integrity_snapshot(conn, actor_id=g.current_member["id"])
+        conn.commit()
+        updated = cursor.rowcount > 0
+    finally:
+        conn.close()
+
     _write_audit(
         "update_record",
         "dbms",
-        "success" if success else "failed",
+        "success" if updated else "failed",
         g.current_member["id"],
         json.dumps({"database": db_name, "table": table_name, "record_id": record_id}),
     )
-    if success:
-        return jsonify({"message": result_message})
-    return jsonify({"error": result_message}), 404
+    if updated:
+        return jsonify({"message": "Record updated successfully"})
+    return jsonify({"error": "Record not found"}), 404
 
 
 @api.route('/databases/<db_name>/tables/<table_name>/records/<record_id>', methods=['DELETE'])
-@require_session
+@require_admin
 def delete_record(db_name, table_name, record_id):
-    table, message = db_manager.get_table(db_name, table_name)
-    if table is None:
-        return jsonify({"error": message}), 404
+    conn = _db_conn()
+    try:
+        cursor = conn.execute(
+            "DELETE FROM project_records WHERE database_name = ? AND table_name = ? AND record_key = ?",
+            (db_name, table_name, record_id),
+        )
+        _refresh_project_records_integrity_snapshot(conn, actor_id=g.current_member["id"])
+        conn.commit()
+        deleted = cursor.rowcount > 0
+    finally:
+        conn.close()
 
-    success, result_message = table.delete(record_id)
     _write_audit(
         "delete_record",
         "dbms",
-        "success" if success else "failed",
+        "success" if deleted else "failed",
         g.current_member["id"],
         json.dumps({"database": db_name, "table": table_name, "record_id": record_id}),
     )
-    if success:
-        return jsonify({"message": result_message})
-    return jsonify({"error": result_message}), 404
+    if deleted:
+        return jsonify({"message": "Record deleted successfully"})
+    return jsonify({"error": "Record not found"}), 404
 
 
 @api.route('/databases/<db_name>/tables/<table_name>/range', methods=['POST'])
@@ -941,22 +1446,69 @@ def range_query(db_name, table_name):
     if 'start' not in data or 'end' not in data:
         return jsonify({"error": "Start and end values are required"}), 400
 
-    table, message = db_manager.get_table(db_name, table_name)
-    if table is None:
-        return jsonify({"error": message}), 404
+    start_sort = _record_key_sort(data['start'])
+    end_sort = _record_key_sort(data['end'])
+    if start_sort > end_sort:
+        start_sort, end_sort = end_sort, start_sort
 
-    results, _ = table.range_query(data['start'], data['end'])
-    return jsonify({"records": [{"data": r} for r in results], "count": len(results)})
+    conn = _db_conn()
+    try:
+        meta = _table_meta(conn, db_name, table_name)
+        if meta is None:
+            return jsonify({"error": "Table not found"}), 404
+
+        rows = conn.execute(
+            """
+            SELECT payload_json, record_key
+            FROM project_records
+            WHERE database_name = ? AND table_name = ?
+            ORDER BY record_key
+            """,
+            (db_name, table_name),
+        ).fetchall()
+    finally:
+        conn.close()
+
+    filtered = []
+    for row in rows:
+        key_sort = _record_key_sort(row["record_key"])
+        if start_sort <= key_sort <= end_sort:
+            filtered.append({"data": json.loads(row["payload_json"])})
+
+    return jsonify({"records": filtered, "count": len(filtered)})
 
 
 @api.route('/databases/<db_name>/tables/<table_name>/visualize', methods=['GET'])
 @require_session
 def visualize_tree(db_name, table_name):
-    table, message = db_manager.get_table(db_name, table_name)
-    if table is None:
-        return jsonify({"error": message}), 404
+    conn = _db_conn()
+    try:
+        meta = _table_meta(conn, db_name, table_name)
+        if meta is None:
+            return jsonify({"error": "Table not found"}), 404
 
-    dot = table.data.visualize_tree()
+        rows = conn.execute(
+            """
+            SELECT record_key
+            FROM project_records
+            WHERE database_name = ? AND table_name = ?
+            ORDER BY record_key
+            """,
+            (db_name, table_name),
+        ).fetchall()
+    finally:
+        conn.close()
+
+    dot = Digraph(comment=f"{db_name}.{table_name}")
+    dot.attr(rankdir='LR')
+    dot.node('root', f"{table_name}\\nsearch_key={meta['search_key']}", shape='box')
+    previous = 'root'
+    for index, row in enumerate(rows):
+        node_id = f"k{index}"
+        dot.node(node_id, row['record_key'], shape='ellipse')
+        dot.edge(previous, node_id)
+        previous = node_id
+
     svg_data = dot.pipe(format='svg').decode('utf-8')
     return Response(svg_data, mimetype='image/svg+xml')
  
