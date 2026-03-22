@@ -7,7 +7,8 @@ This repository contains coursework for CS-432 (Databases), including Assignment
 - `assignment-01/`
   - SQL schema, inserts, queries, and results related to Assignment 01.
 - `assignment-02/`
-  - Module B implementation with backend APIs, RBAC, audit logging, indexing, benchmarking, and frontend UI.
+  - `Module_A/` placeholder for Module A deliverables.
+  - `Module_B/` implementation with backend APIs, RBAC, audit logging, indexing, benchmarking, and frontend UI.
 
 
 ## Assignment 01
@@ -19,20 +20,23 @@ Contains:
 - SQL query files
 - Query result notes
 
-## Assignment 02 (Module B)
+## Assignment 02
 
 Path: `assignment-02/`
 
 Contains:
-- `db_management_system/`
-  - Flask backend APIs
-  - SQLite core tables
-  - RBAC and session validation
-  - Audit logs and indexing routes
-- `frontend/`
-  - Next.js admin/user interface
-  - Member portfolio pages
-  - Database management pages
+- `Module_A/`
+  - Folder reserved for Module A content.
+- `Module_B/`
+  - `db_management_system/`
+    - Flask backend APIs
+    - SQLite core tables
+    - RBAC and session validation
+    - Audit logs and indexing routes
+  - `frontend/`
+    - Next.js admin/user interface
+    - Member portfolio pages
+    - Database management pages
 
 ## Notes
 
