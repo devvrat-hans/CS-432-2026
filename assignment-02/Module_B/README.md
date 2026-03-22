@@ -75,7 +75,7 @@ What each major folder is responsible for:
 ## Prerequisites
 
 Before trying to run the project, make sure these are installed on your system:
-1. **Python 3.9+**
+1. **Python 3.13+**
 2. **Node.js 18+** / npm
 3. **Git**
 
@@ -95,7 +95,7 @@ The backend provides API logic over the local SQLite storage and serves validati
    ```
 2. Create and activate a Virtual Environment (Recommended):
    ```bash
-   python3 -m venv venv
+   python3.13 -m venv venv
    source venv/bin/activate  # Windows users: `venv\Scripts\activate`
    ```
 3. Install the required external Python dependencies:
@@ -104,7 +104,7 @@ The backend provides API logic over the local SQLite storage and serves validati
    ```
 4. Start the Application Server:
    ```bash
-   python3 app.py
+   python3.13 app.py
    ```
 > **Note**: Upon the first initialization, the script will automatically create `module_b.sqlite3`, constructing all the required schemas. The system will also automatically insert a default `admin` credential so that you will be able to log in securely natively. The API binds to `http://127.0.0.1:8080`.
 >
