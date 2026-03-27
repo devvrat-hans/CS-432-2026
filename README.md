@@ -1,44 +1,51 @@
 # CS-432-2026 Repository
 
-This repository contains coursework for CS-432 (Databases), including Assignment 01 and Assignment 02.
+This repository contains coursework for CS-432 (Databases) across multiple assignments,
+including Assignment 03 implementation work.
 
 ## Repository Structure
 
-- `assignment-01/`
-  - SQL schema, inserts, queries, and results related to Assignment 01.
-- `assignment-02/`
-  - `Module_A/` placeholder for Module A deliverables.
-  - `Module_B/` implementation with backend APIs, RBAC, audit logging, indexing, benchmarking, and frontend UI.
+- assignment-01/
+  - SQL schema, inserts, queries, and result notes.
+- assignment-02/
+  - Earlier assignment deliverables (Module A and Module B).
+- assignment03/
+  - Active Assignment 03 working directory.
+  - Module_A includes transaction engine, WAL, rollback, crash recovery,
+    consistency validation, failure injection, observability, and comprehensive tests.
 
+## Assignment 03 Focus
 
-## Assignment 01
+Path: assignment03/
 
-Path: `assignment-01/`
+### Module A
 
-Contains:
-- SQL DDL and inserts
-- SQL query files
-- Query result notes
+Path: assignment03/Module_A/
 
-## Assignment 02
+Implemented:
+- Transaction context lifecycle and staged mutations
+- Write-ahead logging with structured events
+- Rollback engine (including idempotent rollback support)
+- Crash recovery for committed and incomplete transactions
+- Consistency checks between data and B+ Tree index
+- Deterministic failure injection checkpoints
+- Transaction-level trace logging and recovery summaries
+- Evidence artifacts for report/video support
 
-Path: `assignment-02/`
+Core tests:
+- test_bplustree.py
+- test_dbmanager.py
+- test_acid_validation.py
+- test_restart_recovery.py
+- test_observability.py
+- test_hardening.py
+- test_reliability_edge_cases.py
 
-Contains:
-- `Module_A/`
-  - Folder reserved for Module A content.
-- `Module_B/`
-  - `db_management_system/`
-    - Flask backend APIs
-    - SQLite core tables
-    - RBAC and session validation
-    - Audit logs and indexing routes
-  - `frontend/`
-    - Next.js admin/user interface
-    - Member portfolio pages
-    - Database management pages
+Run Module A validation:
+
+/Users/devvrathans/college/semester-06/CS-432-2026/venv/bin/python -m unittest test_bplustree.py test_dbmanager.py test_acid_validation.py test_restart_recovery.py test_observability.py test_hardening.py test_reliability_edge_cases.py
 
 ## Notes
 
-- Local-only helper files are intentionally untracked via `.gitignore`.
+- Local-only helper files are intentionally untracked via .gitignore.
 - Build/cache artifacts and virtual environments are excluded from version control.
