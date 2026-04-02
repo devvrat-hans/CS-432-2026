@@ -643,19 +643,9 @@ def _load_live_table_records(conn, db_name, table_name):
         ).fetchall()
         return [dict(row) for row in rows]
 
-    physical_name = table_name
-    if not _is_safe_identifier(physical_name):
-        return None
-
-    table_exists = conn.execute(
-        "SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = ?",
-        (physical_name,),
-    ).fetchone()
-    if table_exists is None:
-        return None
-
-    rows = conn.execute(f'SELECT * FROM "{physical_name}"').fetchall()
-    return [dict(row) for row in rows]
+    # For all other tables, use project_records as the single source of truth
+    # so GET/PUT/POST/DELETE stay consistent in the admin CRUD UI.
+    return None
 
 
 @api.route("/auth/login", methods=["POST"])
@@ -1794,6 +1784,75 @@ def update_record(db_name, table_name, record_id):
             return jsonify({"error": "Table not found"}), 404
 
         search_key = meta["search_key"]
+
+        if db_name == DEFAULT_PROJECT_DATABASE and table_name == "Member":
+            try:
+                member_id = int(record_id)
+            except ValueError:
+                return jsonify({"error": "Invalid Member record id"}), 400
+
+            if "memberID" in data and str(data["memberID"]) != str(record_id):
+                return jsonify({"error": "Changing record key is not supported"}), 400
+
+            updates = []
+            values = []
+            next_group_name = None
+
+            if "name" in data:
+                updates.append("full_name = ?")
+                values.append((data.get("name") or "").strip())
+
+            if "email" in data:
+                email_value = (data.get("email") or "").strip()
+                if not email_value:
+                    return jsonify({"error": "Email cannot be empty"}), 400
+                updates.append("email = ?")
+                values.append(email_value)
+
+            if "contactNumber" in data:
+                next_group_name = _normalize_member_group(data.get("contactNumber"))
+                updates.append("member_group = ?")
+                values.append(next_group_name)
+
+            if not updates:
+                return jsonify({"error": "No updatable Member fields provided"}), 400
+
+            values.append(member_id)
+            cursor = conn.execute(
+                f"UPDATE members SET {', '.join(updates)} WHERE id = ?",
+                values,
+            )
+            updated = cursor.rowcount > 0
+
+            if updated and next_group_name is not None:
+                now = _now_iso()
+                conn.execute(
+                    """
+                    INSERT INTO member_group_mappings (member_id, group_name, created_at, updated_at)
+                    VALUES (?, ?, ?, ?)
+                    ON CONFLICT(member_id)
+                    DO UPDATE SET
+                        group_name = excluded.group_name,
+                        updated_at = excluded.updated_at
+                    """,
+                    (member_id, next_group_name, now, now),
+                )
+
+            if updated:
+                _sync_system_admin_records(conn, actor_id=g.current_member["id"])
+
+            conn.commit()
+            _write_audit(
+                "update_record",
+                "dbms",
+                "success" if updated else "failed",
+                g.current_member["id"],
+                json.dumps({"database": db_name, "table": table_name, "record_id": record_id}),
+            )
+            if updated:
+                return jsonify({"message": "Record updated successfully"})
+            return jsonify({"error": "Record not found"}), 404
+
         existing = conn.execute(
             """
             SELECT payload_json
@@ -1830,6 +1889,8 @@ def update_record(db_name, table_name, record_id):
         )
         conn.commit()
         updated = cursor.rowcount > 0
+    except sqlite3.IntegrityError as exc:
+        return jsonify({"error": f"Update failed: {str(exc)}"}), 400
     finally:
         conn.close()
 
@@ -1850,12 +1911,30 @@ def update_record(db_name, table_name, record_id):
 def delete_record(db_name, table_name, record_id):
     conn = _db_conn()
     try:
-        cursor = conn.execute(
-            "DELETE FROM project_records WHERE database_name = ? AND table_name = ? AND record_key = ?",
-            (db_name, table_name, record_id),
-        )
-        conn.commit()
-        deleted = cursor.rowcount > 0
+        if db_name == DEFAULT_PROJECT_DATABASE and table_name == "Member":
+            try:
+                member_id = int(record_id)
+            except ValueError:
+                return jsonify({"error": "Invalid Member record id"}), 400
+
+            if g.current_member["id"] == member_id:
+                return jsonify({"error": "You cannot delete your own active account"}), 400
+
+            conn.execute("DELETE FROM sessions WHERE member_id = ?", (member_id,))
+            conn.execute("DELETE FROM member_credentials WHERE member_id = ?", (member_id,))
+            conn.execute("DELETE FROM member_group_mappings WHERE member_id = ?", (member_id,))
+            cursor = conn.execute("DELETE FROM members WHERE id = ?", (member_id,))
+            deleted = cursor.rowcount > 0
+            if deleted:
+                _sync_system_admin_records(conn, actor_id=g.current_member["id"])
+            conn.commit()
+        else:
+            cursor = conn.execute(
+                "DELETE FROM project_records WHERE database_name = ? AND table_name = ? AND record_key = ?",
+                (db_name, table_name, record_id),
+            )
+            conn.commit()
+            deleted = cursor.rowcount > 0
     finally:
         conn.close()
 
