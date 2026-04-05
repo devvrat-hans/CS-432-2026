@@ -310,16 +310,3 @@ Rubric-aligned technical mapping:
    - stress suites with deterministic thresholds and metrics
 5. Clarity of explanation:
    - this README + test artifacts + final report + demo video
-
-## Demo Checklist (For Submission Video)
-
-1. Start backend and frontend.
-2. Log in as admin and show dashboard.
-3. Demonstrate concurrent operations and race safety.
-4. Demonstrate injected failure and rollback (no partial commit).
-5. Demonstrate retry success after rollback.
-6. Demonstrate breakpoint stress phase and show structured metrics artifact.
-7. Demonstrate telemetry samples tied to phase boundaries.
-8. Demonstrate threshold evaluation output (`pass`/`conditional_pass`/`fail`).
-9. Demonstrate RBAC denial for regular user actions.
-10. Show audit logs for success/failure/denial and test execution actions.
