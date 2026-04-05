@@ -1,12 +1,16 @@
 TestModuleBConcurrentUsage Results
-Run started (UTC): 2026-04-05T10:30:58.038666+00:00
+Run started (UTC): 2026-04-05T10:36:06.190927+00:00
 ========================================================================
-[PASS] test_module_b_concurrent_usage.TestModuleBConcurrentUsage.test_parallel_unique_inserts_preserve_count (594.905 ms)
+[PASS] test_module_b_concurrent_usage.TestModuleBConcurrentUsage.test_cross_table_contention_preserves_referential_integrity (611.799 ms)
+[PASS] test_module_b_concurrent_usage.TestModuleBConcurrentUsage.test_parallel_database_create_duplicate_name_safe (30.709 ms)
+[PASS] test_module_b_concurrent_usage.TestModuleBConcurrentUsage.test_parallel_mixed_create_update_delete_same_record_invariants (405.566 ms)
+[PASS] test_module_b_concurrent_usage.TestModuleBConcurrentUsage.test_parallel_reads_during_writes_remain_consistent (422.350 ms)
+[PASS] test_module_b_concurrent_usage.TestModuleBConcurrentUsage.test_parallel_unique_inserts_preserve_count (528.358 ms)
 
 ========================================================================
 Run summary
-Total: 1
-PASS: 1
+Total: 5
+PASS: 5
 FAIL: 0
 ERROR: 0
-Elapsed seconds: 0.5980
+Elapsed seconds: 2.0043

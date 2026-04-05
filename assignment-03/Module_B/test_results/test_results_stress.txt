@@ -1,12 +1,19 @@
 TestModuleBStress Results
-Run started (UTC): 2026-04-05T10:31:03.884476+00:00
+Run started (UTC): 2026-04-05T10:36:09.180556+00:00
 ========================================================================
-[PASS] test_module_b_stress.TestModuleBStress.test_failure_injection_under_parallel_load_rolls_back_and_retry_succeeds (591.538 ms)
+[PASS] test_module_b_stress.TestModuleBStress.test_failure_injection_under_parallel_load_rolls_back_and_retry_succeeds (819.070 ms)
+[PASS] test_module_b_stress.TestModuleBStress.test_high_volume_parallel_insert_stress (1029.772 ms)
+[PASS] test_module_b_stress.TestModuleBStress.test_hotspot_contention_detects_no_lost_updates_or_duplicate_commits (538.872 ms)
+[PASS] test_module_b_stress.TestModuleBStress.test_many_unique_token_consumptions_under_load (633.354 ms)
+[PASS] test_module_b_stress.TestModuleBStress.test_stress_activity_emits_required_audit_traces (33.933 ms)
+[PASS] test_module_b_stress.TestModuleBStress.test_sustained_read_stress_consistency (911.786 ms)
+[METRICS] thousands_scale_insert success_rate=1.0000 invariant_violations=0 avg_ms=35.053 p95_ms=193.733 total_seconds=1.547
+[PASS] test_module_b_stress.TestModuleBStress.test_thousands_scale_insert_metrics (1564.173 ms)
 
 ========================================================================
 Run summary
-Total: 1
-PASS: 1
+Total: 7
+PASS: 7
 FAIL: 0
 ERROR: 0
-Elapsed seconds: 0.5926
+Elapsed seconds: 5.5362
