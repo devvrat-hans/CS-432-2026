@@ -1,3 +1,8 @@
+# pyright: reportMissingImports=false
+
 """Compatibility shim for moved durability tests."""
 
-from assignment03.Module_B.tests.test_module_b_durability import *  # noqa: F401,F403
+try:
+	from tests.test_module_b_durability import *
+except ModuleNotFoundError:
+	from assignment03.Module_B.tests.test_module_b_durability import *

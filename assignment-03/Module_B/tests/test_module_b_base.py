@@ -16,12 +16,12 @@ DB_PATH = BACKEND_ROOT / "module_b.sqlite3"
 if str(BACKEND_ROOT) not in sys.path:
     sys.path.insert(0, str(BACKEND_ROOT))
 
-from app import app  # noqa: E402
+from app import app
 
 try:
-    from api.routes import _write_audit  # noqa: E402
+    from api.routes import _write_audit
 except ModuleNotFoundError:
-    from assignment03.Module_B.db_management_system.api.routes import _write_audit  # noqa: E402
+    from assignment03.Module_B.db_management_system.api.routes import _write_audit
 
 
 def _extract_status_for_test(result_obj, test_id):

@@ -5,7 +5,7 @@ try:
     # Works when executed from repository root as a package import.
     from assignment03.Module_B.db_management_system.api.routes import api
 except ModuleNotFoundError:
-    # Works when executed from assignment03/Module_B/db_management_system directly.
+    # Works when executed from assignment-03/Module_B/db_management_system directly.
     from api.routes import api
 
 app = Flask(__name__)

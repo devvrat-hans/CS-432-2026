@@ -1,0 +1,318 @@
+========================================================================
+Run started (UTC): 2026-04-05T09:48:53.776160+00:00
+Selected phases: baseline, ramp, spike, soak, breakpoint, failure-under-load, final-durability
+Fast fail: False
+Phase retry limit: 0
+Phase timeout seconds: 0.0
+Run cancelled: False
+------------------------------------------------------------------------
+Phase attempts:
+baseline (attempt 1): PASS | tests=1 failures=0 errors=0 skipped=0
+ramp (attempt 1): PASS | tests=1 failures=0 errors=0 skipped=0
+spike (attempt 1): PASS | tests=1 failures=0 errors=0 skipped=0
+soak (attempt 1): PASS | tests=1 failures=0 errors=0 skipped=0
+breakpoint (attempt 1): FAIL | tests=2 failures=1 errors=0 skipped=0
+failure-under-load (attempt 1): PASS | tests=1 failures=0 errors=0 skipped=0
+final-durability (attempt 1): PASS | tests=2 failures=0 errors=0 skipped=0
+------------------------------------------------------------------------
+Final phase outcomes:
+baseline: PASS (attempt 1) | tests=1 failures=0 errors=0 skipped=0
+ramp: PASS (attempt 1) | tests=1 failures=0 errors=0 skipped=0
+spike: PASS (attempt 1) | tests=1 failures=0 errors=0 skipped=0
+soak: PASS (attempt 1) | tests=1 failures=0 errors=0 skipped=0
+breakpoint: FAIL (attempt 1) | tests=2 failures=1 errors=0 skipped=0
+failure-under-load: PASS (attempt 1) | tests=1 failures=0 errors=0 skipped=0
+final-durability: PASS (attempt 1) | tests=2 failures=0 errors=0 skipped=0
+------------------------------------------------------------------------
+Phases passed: 6
+Phases failed: 1
+Overall status: FAIL
+========================================================================
+========================================================================
+Run started (UTC): 2026-04-05T09:50:00.794901+00:00
+Selected phases: baseline, ramp, spike, soak, breakpoint, failure-under-load, final-durability
+Fast fail: False
+Phase retry limit: 0
+Phase timeout seconds: 0.0
+Run cancelled: False
+------------------------------------------------------------------------
+Phase attempts:
+baseline (attempt 1): PASS | tests=1 failures=0 errors=0 skipped=0
+ramp (attempt 1): PASS | tests=1 failures=0 errors=0 skipped=0
+spike (attempt 1): PASS | tests=1 failures=0 errors=0 skipped=0
+soak (attempt 1): PASS | tests=1 failures=0 errors=0 skipped=0
+breakpoint (attempt 1): PASS | tests=2 failures=0 errors=0 skipped=0
+failure-under-load (attempt 1): PASS | tests=1 failures=0 errors=0 skipped=0
+final-durability (attempt 1): PASS | tests=2 failures=0 errors=0 skipped=0
+------------------------------------------------------------------------
+Final phase outcomes:
+baseline: PASS (attempt 1) | tests=1 failures=0 errors=0 skipped=0
+ramp: PASS (attempt 1) | tests=1 failures=0 errors=0 skipped=0
+spike: PASS (attempt 1) | tests=1 failures=0 errors=0 skipped=0
+soak: PASS (attempt 1) | tests=1 failures=0 errors=0 skipped=0
+breakpoint: PASS (attempt 1) | tests=2 failures=0 errors=0 skipped=0
+failure-under-load: PASS (attempt 1) | tests=1 failures=0 errors=0 skipped=0
+final-durability: PASS (attempt 1) | tests=2 failures=0 errors=0 skipped=0
+------------------------------------------------------------------------
+Phases passed: 7
+Phases failed: 0
+Overall status: PASS
+========================================================================
+========================================================================
+Run started (UTC): 2026-04-05T09:53:56.211897+00:00
+Selected phases: baseline, ramp, spike, soak, breakpoint, failure-under-load, final-durability
+Fast fail: False
+Phase retry limit: 0
+Phase timeout seconds: 0.0
+Run cancelled: False
+------------------------------------------------------------------------
+Phase attempts:
+baseline (attempt 1): PASS | tests=1 failures=0 errors=0 skipped=0
+ramp (attempt 1): PASS | tests=1 failures=0 errors=0 skipped=0
+spike (attempt 1): PASS | tests=1 failures=0 errors=0 skipped=0
+soak (attempt 1): PASS | tests=1 failures=0 errors=0 skipped=0
+breakpoint (attempt 1): PASS | tests=2 failures=0 errors=0 skipped=0
+failure-under-load (attempt 1): PASS | tests=1 failures=0 errors=0 skipped=0
+final-durability (attempt 1): PASS | tests=2 failures=0 errors=0 skipped=0
+------------------------------------------------------------------------
+Final phase outcomes:
+baseline: PASS (attempt 1) | tests=1 failures=0 errors=0 skipped=0
+ramp: PASS (attempt 1) | tests=1 failures=0 errors=0 skipped=0
+spike: PASS (attempt 1) | tests=1 failures=0 errors=0 skipped=0
+soak: PASS (attempt 1) | tests=1 failures=0 errors=0 skipped=0
+breakpoint: PASS (attempt 1) | tests=2 failures=0 errors=0 skipped=0
+failure-under-load: PASS (attempt 1) | tests=1 failures=0 errors=0 skipped=0
+final-durability: PASS (attempt 1) | tests=2 failures=0 errors=0 skipped=0
+------------------------------------------------------------------------
+Phases passed: 7
+Phases failed: 0
+Overall status: PASS
+========================================================================
+========================================================================
+Run started (UTC): 2026-04-05T09:54:58.988542+00:00
+Selected phases: ramp
+Fast fail: False
+Phase retry limit: 1
+Phase timeout seconds: 60.0
+Run cancelled: False
+------------------------------------------------------------------------
+Phase attempts:
+ramp (attempt 1): PASS | tests=1 failures=0 errors=0 skipped=0
+------------------------------------------------------------------------
+Final phase outcomes:
+ramp: PASS (attempt 1) | tests=1 failures=0 errors=0 skipped=0
+------------------------------------------------------------------------
+Phases passed: 1
+Phases failed: 0
+Overall status: PASS
+========================================================================
+========================================================================
+Run started (UTC): 2026-04-05T09:58:34.202299+00:00
+Selected phases: baseline, ramp, spike, soak, breakpoint, failure-under-load, final-durability
+Fast fail: False
+Phase retry limit: 0
+Phase timeout seconds: 0.0
+Run cancelled: False
+------------------------------------------------------------------------
+Phase attempts:
+baseline (attempt 1): PASS | tests=1 failures=0 errors=0 skipped=0
+ramp (attempt 1): PASS | tests=1 failures=0 errors=0 skipped=0
+spike (attempt 1): PASS | tests=1 failures=0 errors=0 skipped=0
+soak (attempt 1): PASS | tests=1 failures=0 errors=0 skipped=0
+breakpoint (attempt 1): PASS | tests=2 failures=0 errors=0 skipped=0
+failure-under-load (attempt 1): PASS | tests=1 failures=0 errors=0 skipped=0
+final-durability (attempt 1): PASS | tests=2 failures=0 errors=0 skipped=0
+------------------------------------------------------------------------
+Final phase outcomes:
+baseline: PASS (attempt 1) | tests=1 failures=0 errors=0 skipped=0
+ramp: PASS (attempt 1) | tests=1 failures=0 errors=0 skipped=0
+spike: PASS (attempt 1) | tests=1 failures=0 errors=0 skipped=0
+soak: PASS (attempt 1) | tests=1 failures=0 errors=0 skipped=0
+breakpoint: PASS (attempt 1) | tests=2 failures=0 errors=0 skipped=0
+failure-under-load: PASS (attempt 1) | tests=1 failures=0 errors=0 skipped=0
+final-durability: PASS (attempt 1) | tests=2 failures=0 errors=0 skipped=0
+------------------------------------------------------------------------
+Phases passed: 7
+Phases failed: 0
+Overall status: PASS
+========================================================================
+========================================================================
+Run started (UTC): 2026-04-05T10:00:34.958763+00:00
+Selected phases: baseline, ramp, spike, soak, breakpoint, failure-under-load, final-durability
+Fast fail: False
+Phase retry limit: 0
+Phase timeout seconds: 0.0
+Run cancelled: False
+------------------------------------------------------------------------
+Phase attempts:
+baseline (attempt 1): PASS | tests=1 failures=0 errors=0 skipped=0
+ramp (attempt 1): PASS | tests=1 failures=0 errors=0 skipped=0
+spike (attempt 1): PASS | tests=1 failures=0 errors=0 skipped=0
+soak (attempt 1): PASS | tests=1 failures=0 errors=0 skipped=0
+breakpoint (attempt 1): FAIL | tests=2 failures=1 errors=0 skipped=0
+failure-under-load (attempt 1): PASS | tests=1 failures=0 errors=0 skipped=0
+final-durability (attempt 1): PASS | tests=2 failures=0 errors=0 skipped=0
+------------------------------------------------------------------------
+Final phase outcomes:
+baseline: PASS (attempt 1) | tests=1 failures=0 errors=0 skipped=0
+ramp: PASS (attempt 1) | tests=1 failures=0 errors=0 skipped=0
+spike: PASS (attempt 1) | tests=1 failures=0 errors=0 skipped=0
+soak: PASS (attempt 1) | tests=1 failures=0 errors=0 skipped=0
+breakpoint: FAIL (attempt 1) | tests=2 failures=1 errors=0 skipped=0
+failure-under-load: PASS (attempt 1) | tests=1 failures=0 errors=0 skipped=0
+final-durability: PASS (attempt 1) | tests=2 failures=0 errors=0 skipped=0
+------------------------------------------------------------------------
+Phases passed: 6
+Phases failed: 1
+Overall status: FAIL
+========================================================================
+========================================================================
+Run started (UTC): 2026-04-05T10:01:44.625898+00:00
+Selected phases: baseline, ramp, spike, soak, breakpoint, failure-under-load, final-durability
+Fast fail: False
+Phase retry limit: 0
+Phase timeout seconds: 0.0
+Run cancelled: False
+------------------------------------------------------------------------
+Phase attempts:
+baseline (attempt 1): PASS | tests=1 failures=0 errors=0 skipped=0
+ramp (attempt 1): PASS | tests=1 failures=0 errors=0 skipped=0
+spike (attempt 1): PASS | tests=1 failures=0 errors=0 skipped=0
+soak (attempt 1): PASS | tests=1 failures=0 errors=0 skipped=0
+breakpoint (attempt 1): PASS | tests=2 failures=0 errors=0 skipped=0
+failure-under-load (attempt 1): PASS | tests=1 failures=0 errors=0 skipped=0
+final-durability (attempt 1): PASS | tests=2 failures=0 errors=0 skipped=0
+------------------------------------------------------------------------
+Final phase outcomes:
+baseline: PASS (attempt 1) | tests=1 failures=0 errors=0 skipped=0
+ramp: PASS (attempt 1) | tests=1 failures=0 errors=0 skipped=0
+spike: PASS (attempt 1) | tests=1 failures=0 errors=0 skipped=0
+soak: PASS (attempt 1) | tests=1 failures=0 errors=0 skipped=0
+breakpoint: PASS (attempt 1) | tests=2 failures=0 errors=0 skipped=0
+failure-under-load: PASS (attempt 1) | tests=1 failures=0 errors=0 skipped=0
+final-durability: PASS (attempt 1) | tests=2 failures=0 errors=0 skipped=0
+------------------------------------------------------------------------
+Phases passed: 7
+Phases failed: 0
+Overall status: PASS
+========================================================================
+========================================================================
+Run started (UTC): 2026-04-05T10:02:14.544267+00:00
+Selected phases: baseline, ramp, spike, soak, breakpoint, failure-under-load, final-durability
+Fast fail: False
+Phase retry limit: 1
+Phase timeout seconds: 120.0
+Run cancelled: False
+------------------------------------------------------------------------
+Phase attempts:
+baseline (attempt 1): PASS | tests=1 failures=0 errors=0 skipped=0
+ramp (attempt 1): PASS | tests=1 failures=0 errors=0 skipped=0
+spike (attempt 1): PASS | tests=1 failures=0 errors=0 skipped=0
+soak (attempt 1): PASS | tests=1 failures=0 errors=0 skipped=0
+breakpoint (attempt 1): PASS | tests=2 failures=0 errors=0 skipped=0
+failure-under-load (attempt 1): PASS | tests=1 failures=0 errors=0 skipped=0
+final-durability (attempt 1): PASS | tests=2 failures=0 errors=0 skipped=0
+------------------------------------------------------------------------
+Final phase outcomes:
+baseline: PASS (attempt 1) | tests=1 failures=0 errors=0 skipped=0
+ramp: PASS (attempt 1) | tests=1 failures=0 errors=0 skipped=0
+spike: PASS (attempt 1) | tests=1 failures=0 errors=0 skipped=0
+soak: PASS (attempt 1) | tests=1 failures=0 errors=0 skipped=0
+breakpoint: PASS (attempt 1) | tests=2 failures=0 errors=0 skipped=0
+failure-under-load: PASS (attempt 1) | tests=1 failures=0 errors=0 skipped=0
+final-durability: PASS (attempt 1) | tests=2 failures=0 errors=0 skipped=0
+------------------------------------------------------------------------
+Phases passed: 7
+Phases failed: 0
+Overall status: PASS
+========================================================================
+========================================================================
+Run started (UTC): 2026-04-05T10:07:12.158291+00:00
+Selected phases: baseline, ramp, spike, soak, breakpoint, failure-under-load, final-durability
+Fast fail: False
+Phase retry limit: 0
+Phase timeout seconds: 0.0
+Run cancelled: False
+------------------------------------------------------------------------
+Phase attempts:
+baseline (attempt 1): PASS | tests=1 failures=0 errors=0 skipped=0
+ramp (attempt 1): PASS | tests=1 failures=0 errors=0 skipped=0
+spike (attempt 1): PASS | tests=1 failures=0 errors=0 skipped=0
+soak (attempt 1): PASS | tests=1 failures=0 errors=0 skipped=0
+breakpoint (attempt 1): PASS | tests=2 failures=0 errors=0 skipped=0
+failure-under-load (attempt 1): PASS | tests=1 failures=0 errors=0 skipped=0
+final-durability (attempt 1): PASS | tests=2 failures=0 errors=0 skipped=0
+------------------------------------------------------------------------
+Final phase outcomes:
+baseline: PASS (attempt 1) | tests=1 failures=0 errors=0 skipped=0
+ramp: PASS (attempt 1) | tests=1 failures=0 errors=0 skipped=0
+spike: PASS (attempt 1) | tests=1 failures=0 errors=0 skipped=0
+soak: PASS (attempt 1) | tests=1 failures=0 errors=0 skipped=0
+breakpoint: PASS (attempt 1) | tests=2 failures=0 errors=0 skipped=0
+failure-under-load: PASS (attempt 1) | tests=1 failures=0 errors=0 skipped=0
+final-durability: PASS (attempt 1) | tests=2 failures=0 errors=0 skipped=0
+------------------------------------------------------------------------
+Phases passed: 7
+Phases failed: 0
+Overall status: PASS
+========================================================================
+========================================================================
+Run started (UTC): 2026-04-05T10:24:13.640769+00:00
+Selected phases: baseline, ramp, spike, soak, breakpoint, failure-under-load, final-durability
+Fast fail: False
+Phase retry limit: 0
+Phase timeout seconds: 0.0
+Run cancelled: False
+------------------------------------------------------------------------
+Phase attempts:
+baseline (attempt 1): PASS | tests=1 failures=0 errors=0 skipped=0
+ramp (attempt 1): PASS | tests=1 failures=0 errors=0 skipped=0
+spike (attempt 1): PASS | tests=1 failures=0 errors=0 skipped=0
+soak (attempt 1): PASS | tests=1 failures=0 errors=0 skipped=0
+breakpoint (attempt 1): PASS | tests=2 failures=0 errors=0 skipped=0
+failure-under-load (attempt 1): PASS | tests=1 failures=0 errors=0 skipped=0
+final-durability (attempt 1): PASS | tests=2 failures=0 errors=0 skipped=0
+------------------------------------------------------------------------
+Final phase outcomes:
+baseline: PASS (attempt 1) | tests=1 failures=0 errors=0 skipped=0
+ramp: PASS (attempt 1) | tests=1 failures=0 errors=0 skipped=0
+spike: PASS (attempt 1) | tests=1 failures=0 errors=0 skipped=0
+soak: PASS (attempt 1) | tests=1 failures=0 errors=0 skipped=0
+breakpoint: PASS (attempt 1) | tests=2 failures=0 errors=0 skipped=0
+failure-under-load: PASS (attempt 1) | tests=1 failures=0 errors=0 skipped=0
+final-durability: PASS (attempt 1) | tests=2 failures=0 errors=0 skipped=0
+------------------------------------------------------------------------
+Phases passed: 7
+Phases failed: 0
+Overall status: PASS
+========================================================================
+========================================================================
+Run started (UTC): 2026-04-05T10:31:04.602689+00:00
+Selected phases: baseline, ramp, spike, soak, breakpoint, failure-under-load, final-durability
+Fast fail: False
+Phase retry limit: 1
+Phase timeout seconds: 120.0
+Run cancelled: False
+------------------------------------------------------------------------
+Phase attempts:
+baseline (attempt 1): PASS | tests=1 failures=0 errors=0 skipped=0
+ramp (attempt 1): PASS | tests=1 failures=0 errors=0 skipped=0
+spike (attempt 1): PASS | tests=1 failures=0 errors=0 skipped=0
+soak (attempt 1): PASS | tests=1 failures=0 errors=0 skipped=0
+breakpoint (attempt 1): PASS | tests=2 failures=0 errors=0 skipped=0
+failure-under-load (attempt 1): PASS | tests=1 failures=0 errors=0 skipped=0
+final-durability (attempt 1): PASS | tests=2 failures=0 errors=0 skipped=0
+------------------------------------------------------------------------
+Final phase outcomes:
+baseline: PASS (attempt 1) | tests=1 failures=0 errors=0 skipped=0
+ramp: PASS (attempt 1) | tests=1 failures=0 errors=0 skipped=0
+spike: PASS (attempt 1) | tests=1 failures=0 errors=0 skipped=0
+soak: PASS (attempt 1) | tests=1 failures=0 errors=0 skipped=0
+breakpoint: PASS (attempt 1) | tests=2 failures=0 errors=0 skipped=0
+failure-under-load: PASS (attempt 1) | tests=1 failures=0 errors=0 skipped=0
+final-durability: PASS (attempt 1) | tests=2 failures=0 errors=0 skipped=0
+------------------------------------------------------------------------
+Phases passed: 7
+Phases failed: 0
+Overall status: PASS
+========================================================================

@@ -1,8 +1,8 @@
 TestModuleBDurability Results
-Run started (UTC): 2026-04-05T09:02:25.418908+00:00
+Run started (UTC): 2026-04-05T10:31:04.478606+00:00
 ========================================================================
-[PASS] assignment03.Module_B.tests.test_module_b_durability.TestModuleBDurability.test_committed_data_persists_after_restart_simulation (35.825 ms)
-[PASS] assignment03.Module_B.tests.test_module_b_durability.TestModuleBDurability.test_failed_transactions_absent_after_restart_simulation (80.253 ms)
+[PASS] test_module_b_durability.TestModuleBDurability.test_committed_data_persists_after_restart_simulation (27.205 ms)
+[PASS] test_module_b_durability.TestModuleBDurability.test_failed_transactions_absent_after_restart_simulation (91.522 ms)
 
 ========================================================================
 Run summary
@@ -10,4 +10,4 @@ Total: 2
 PASS: 2
 FAIL: 0
 ERROR: 0
-Elapsed seconds: 0.1191
+Elapsed seconds: 0.1233

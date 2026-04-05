@@ -1,16 +1,12 @@
 TestModuleBStress Results
-Run started (UTC): 2026-04-05T09:02:25.551408+00:00
+Run started (UTC): 2026-04-05T10:31:03.884476+00:00
 ========================================================================
-[PASS] assignment03.Module_B.tests.test_module_b_stress.TestModuleBStress.test_high_volume_parallel_insert_stress (1378.355 ms)
-[PASS] assignment03.Module_B.tests.test_module_b_stress.TestModuleBStress.test_many_unique_token_consumptions_under_load (926.045 ms)
-[PASS] assignment03.Module_B.tests.test_module_b_stress.TestModuleBStress.test_sustained_read_stress_consistency (1110.668 ms)
-[METRICS] thousands_scale_insert success_rate=1.0000 invariant_violations=0 avg_ms=50.778 p95_ms=227.092 total_seconds=2.311
-[PASS] assignment03.Module_B.tests.test_module_b_stress.TestModuleBStress.test_thousands_scale_insert_metrics (2320.371 ms)
+[PASS] test_module_b_stress.TestModuleBStress.test_failure_injection_under_parallel_load_rolls_back_and_retry_succeeds (591.538 ms)
 
 ========================================================================
 Run summary
-Total: 4
-PASS: 4
+Total: 1
+PASS: 1
 FAIL: 0
 ERROR: 0
-Elapsed seconds: 5.7405
+Elapsed seconds: 0.5926

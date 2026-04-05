@@ -1,0 +1,281 @@
+{
+  "generated_at_utc": "2026-04-05T10:31:04.603298+00:00",
+  "phase_count": 7,
+  "phase_summaries": [
+    {
+      "errors": 0,
+      "failures": 0,
+      "metric_evaluations": [],
+      "phase": "baseline",
+      "policy": {
+        "conditional_p95_latency_ms": 1250.0,
+        "conditional_success_rate_floor": 0.97,
+        "maximum_invariant_violations": 0,
+        "maximum_p95_latency_ms": 1000.0,
+        "minimum_success_rate": 0.99
+      },
+      "reasons": [
+        "no_metrics_available_for_phase; evaluated from test outcome"
+      ],
+      "skipped": 0,
+      "status": "pass",
+      "test_passed": true,
+      "tests_run": 1
+    },
+    {
+      "errors": 0,
+      "failures": 0,
+      "metric_evaluations": [
+        {
+          "metric_phase_name": "high_volume_parallel_insert_stress",
+          "observed": {
+            "invariant_violations": 0,
+            "p95_latency_ms": 248.8544579991867,
+            "success_count": 600,
+            "success_rate": 1.0,
+            "total_requests": 600
+          },
+          "reasons": [],
+          "recorded_at_utc": "2026-04-05T10:30:59.835867+00:00",
+          "status": "pass"
+        }
+      ],
+      "phase": "ramp",
+      "policy": {
+        "conditional_p95_latency_ms": 1250.0,
+        "conditional_success_rate_floor": 0.97,
+        "maximum_invariant_violations": 0,
+        "maximum_p95_latency_ms": 1000.0,
+        "minimum_success_rate": 0.99
+      },
+      "reasons": [
+        "all_metric_records_met_primary_thresholds"
+      ],
+      "skipped": 0,
+      "status": "pass",
+      "test_passed": true,
+      "tests_run": 1
+    },
+    {
+      "errors": 0,
+      "failures": 0,
+      "metric_evaluations": [
+        {
+          "metric_phase_name": "many_unique_token_consumptions_under_load",
+          "observed": {
+            "invariant_violations": 0,
+            "p95_latency_ms": 260.986999999659,
+            "success_count": 120,
+            "success_rate": 1.0,
+            "total_requests": 120
+          },
+          "reasons": [],
+          "recorded_at_utc": "2026-04-05T10:31:00.699870+00:00",
+          "status": "pass"
+        }
+      ],
+      "phase": "spike",
+      "policy": {
+        "conditional_p95_latency_ms": 1250.0,
+        "conditional_success_rate_floor": 0.97,
+        "maximum_invariant_violations": 0,
+        "maximum_p95_latency_ms": 1000.0,
+        "minimum_success_rate": 0.99
+      },
+      "reasons": [
+        "all_metric_records_met_primary_thresholds"
+      ],
+      "skipped": 0,
+      "status": "pass",
+      "test_passed": true,
+      "tests_run": 1
+    },
+    {
+      "errors": 0,
+      "failures": 0,
+      "metric_evaluations": [
+        {
+          "metric_phase_name": "sustained_read_stress_consistency",
+          "observed": {
+            "invariant_violations": 0,
+            "p95_latency_ms": 0.8526669989805669,
+            "success_count": 700,
+            "success_rate": 1.0,
+            "total_requests": 700
+          },
+          "reasons": [],
+          "recorded_at_utc": "2026-04-05T10:31:01.631559+00:00",
+          "status": "pass"
+        }
+      ],
+      "phase": "soak",
+      "policy": {
+        "conditional_p95_latency_ms": 1250.0,
+        "conditional_success_rate_floor": 0.97,
+        "maximum_invariant_violations": 0,
+        "maximum_p95_latency_ms": 1000.0,
+        "minimum_success_rate": 0.99
+      },
+      "reasons": [
+        "all_metric_records_met_primary_thresholds"
+      ],
+      "skipped": 0,
+      "status": "pass",
+      "test_passed": true,
+      "tests_run": 1
+    },
+    {
+      "errors": 0,
+      "failures": 0,
+      "metric_evaluations": [
+        {
+          "metric_phase_name": "thousands_scale_insert_metrics",
+          "observed": {
+            "invariant_violations": 0,
+            "p95_latency_ms": 151.85491600095702,
+            "success_count": 1000,
+            "success_rate": 1.0,
+            "total_requests": 1000
+          },
+          "reasons": [],
+          "recorded_at_utc": "2026-04-05T10:31:03.288082+00:00",
+          "status": "pass"
+        },
+        {
+          "metric_phase_name": "hotspot_parallel_updates",
+          "observed": {
+            "invariant_violations": 0,
+            "p95_latency_ms": 327.68183300140663,
+            "success_count": 180,
+            "success_rate": 1.0,
+            "total_requests": 180
+          },
+          "reasons": [],
+          "recorded_at_utc": "2026-04-05T10:31:03.881261+00:00",
+          "status": "pass"
+        },
+        {
+          "metric_phase_name": "hotspot_duplicate_creates",
+          "observed": {
+            "invariant_violations": 0,
+            "p95_latency_ms": 83.05762500094716,
+            "success_count": 90,
+            "success_rate": 1.0,
+            "total_requests": 90
+          },
+          "reasons": [],
+          "recorded_at_utc": "2026-04-05T10:31:03.881377+00:00",
+          "status": "pass"
+        }
+      ],
+      "phase": "breakpoint",
+      "policy": {
+        "conditional_p95_latency_ms": 1250.0,
+        "conditional_success_rate_floor": 0.97,
+        "maximum_invariant_violations": 0,
+        "maximum_p95_latency_ms": 1000.0,
+        "minimum_success_rate": 0.99
+      },
+      "reasons": [
+        "all_metric_records_met_primary_thresholds"
+      ],
+      "skipped": 0,
+      "status": "pass",
+      "test_passed": true,
+      "tests_run": 2
+    },
+    {
+      "errors": 0,
+      "failures": 0,
+      "metric_evaluations": [
+        {
+          "metric_phase_name": "failure_injection_parallel_path",
+          "observed": {
+            "invariant_violations": 0,
+            "p95_latency_ms": 210.78383299936831,
+            "success_count": 40,
+            "success_rate": 1.0,
+            "total_requests": 40
+          },
+          "reasons": [],
+          "recorded_at_utc": "2026-04-05T10:31:04.476281+00:00",
+          "status": "pass"
+        },
+        {
+          "metric_phase_name": "success_parallel_path",
+          "observed": {
+            "invariant_violations": 0,
+            "p95_latency_ms": 37.50837500047055,
+            "success_count": 40,
+            "success_rate": 1.0,
+            "total_requests": 40
+          },
+          "reasons": [],
+          "recorded_at_utc": "2026-04-05T10:31:04.476373+00:00",
+          "status": "pass"
+        },
+        {
+          "metric_phase_name": "retry_after_failure_path",
+          "observed": {
+            "invariant_violations": 0,
+            "p95_latency_ms": 1.277082999877166,
+            "success_count": 40,
+            "success_rate": 1.0,
+            "total_requests": 40
+          },
+          "reasons": [],
+          "recorded_at_utc": "2026-04-05T10:31:04.476419+00:00",
+          "status": "pass"
+        },
+        {
+          "metric_phase_name": "retry_idempotency_path",
+          "observed": {
+            "invariant_violations": 0,
+            "p95_latency_ms": 0.5285410006763414,
+            "success_count": 40,
+            "success_rate": 1.0,
+            "total_requests": 40
+          },
+          "reasons": [],
+          "recorded_at_utc": "2026-04-05T10:31:04.476464+00:00",
+          "status": "pass"
+        }
+      ],
+      "phase": "failure-under-load",
+      "policy": {
+        "conditional_p95_latency_ms": 1250.0,
+        "conditional_success_rate_floor": 0.97,
+        "maximum_invariant_violations": 0,
+        "maximum_p95_latency_ms": 1000.0,
+        "minimum_success_rate": 0.99
+      },
+      "reasons": [
+        "all_metric_records_met_primary_thresholds"
+      ],
+      "skipped": 0,
+      "status": "pass",
+      "test_passed": true,
+      "tests_run": 1
+    },
+    {
+      "errors": 0,
+      "failures": 0,
+      "metric_evaluations": [],
+      "phase": "final-durability",
+      "policy": {
+        "conditional_p95_latency_ms": 1250.0,
+        "conditional_success_rate_floor": 0.97,
+        "maximum_invariant_violations": 0,
+        "maximum_p95_latency_ms": 1000.0,
+        "minimum_success_rate": 0.99
+      },
+      "reasons": [
+        "no_metrics_available_for_phase; evaluated from test outcome"
+      ],
+      "skipped": 0,
+      "status": "pass",
+      "test_passed": true,
+      "tests_run": 2
+    }
+  ]
+}

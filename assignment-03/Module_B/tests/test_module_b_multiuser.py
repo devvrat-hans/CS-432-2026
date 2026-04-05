@@ -19,12 +19,12 @@ RESULTS_PATH = RESULTS_ROOT / "test_module_b_multiuser_results.txt"
 if str(BACKEND_ROOT) not in sys.path:
     sys.path.insert(0, str(BACKEND_ROOT))
 
-from app import app  # noqa: E402
+from app import app
 
 try:
-    from api.routes import _write_audit  # noqa: E402
+    from api.routes import _write_audit
 except ModuleNotFoundError:
-    from assignment03.Module_B.db_management_system.api.routes import _write_audit  # noqa: E402
+    from assignment03.Module_B.db_management_system.api.routes import _write_audit
 
 
 def _append_result_line(text):

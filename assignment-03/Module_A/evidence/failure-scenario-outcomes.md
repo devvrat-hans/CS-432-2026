@@ -51,5 +51,5 @@ Scope:
 
 ## Final Status
 - Consolidated suite outcome: PASS
-- Command: /Users/devvrathans/college/semester-06/CS-432-2026/venv/bin/python -m unittest test_bplustree.py test_dbmanager.py test_acid_validation.py test_restart_recovery.py test_observability.py test_hardening.py test_reliability_edge_cases.py
+- Command: python -m unittest test_bplustree.py test_dbmanager.py test_acid_validation.py test_restart_recovery.py test_observability.py test_hardening.py test_reliability_edge_cases.py
 - Result: Ran 13 tests in 0.010s, OK

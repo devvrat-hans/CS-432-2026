@@ -1,7 +1,7 @@
 # ACID Proof Matrix (Module A)
 
 Test run command:
-- /Users/devvrathans/college/semester-06/CS-432-2026/venv/bin/python -m unittest test_bplustree.py test_dbmanager.py test_acid_validation.py test_restart_recovery.py test_observability.py test_hardening.py test_reliability_edge_cases.py
+- python -m unittest test_bplustree.py test_dbmanager.py test_acid_validation.py test_restart_recovery.py test_observability.py test_hardening.py test_reliability_edge_cases.py
 
 Run result:
 - Ran 13 tests in 0.010s

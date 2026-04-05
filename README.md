@@ -1,80 +1,78 @@
 # CS-432-2026 Repository
 
-This repository contains coursework for CS-432 (Databases) across multiple assignments,
-including Assignment 03 implementation work.
+This repository contains coursework for CS-432 (Databases), including Assignment 03.
 
 ## Repository Structure
 
 - assignment-01/
-  - SQL schema, inserts, queries, and result notes.
 - assignment-02/
-  - Earlier assignment deliverables (Module A and Module B).
-- assignment03/
-  - Active Assignment 03 working directory.
-  - Module_A includes transaction engine, WAL, rollback, crash recovery,
-    consistency validation, failure injection, observability, and comprehensive tests.
-  - Module_B includes high-concurrency API validation, race-condition checks,
-    failure/rollback simulation, durability checks, stress tests, and observability tests.
+- assignment-03/
+  - Module_A/
+  - Module_B/
 
-## Assignment 03 Focus
+## Assignment 03 Module B (Submission Focus)
 
-Path: assignment03/
+Path: `assignment-03/Module_B/`
 
-### Module A
+Module B covers high-concurrency API validation and stress/failure reliability checks.
 
-Path: assignment03/Module_A/
+Implemented scope includes:
+- concurrent usage correctness
+- race-condition safety
+- failure injection with rollback validation
+- durability checks after restart simulation
+- stress validation with phase metrics
+- audit-log observability validation
 
-Implemented:
-- Transaction context lifecycle and staged mutations
-- Write-ahead logging with structured events
-- Rollback engine (including idempotent rollback support)
-- Crash recovery for committed and incomplete transactions
-- Consistency checks between data and B+ Tree index
-- Deterministic failure injection checkpoints
-- Transaction-level trace logging and recovery summaries
-- Evidence artifacts for report/video support
+## Module B Quick Start
 
-Core tests:
-- test_bplustree.py
-- test_dbmanager.py
-- test_acid_validation.py
-- test_restart_recovery.py
-- test_observability.py
-- test_hardening.py
-- test_reliability_edge_cases.py
+Backend:
 
-Run Module A validation:
+```bash
+cd assignment-03/Module_B/db_management_system
+python3 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+python3 app.py
+```
 
-/Users/devvrathans/college/semester-06/CS-432-2026/venv/bin/python -m unittest test_bplustree.py test_dbmanager.py test_acid_validation.py test_restart_recovery.py test_observability.py test_hardening.py test_reliability_edge_cases.py
+Frontend:
 
-### Module B
+```bash
+cd assignment-03/Module_B/frontend
+npm install
+npm run dev
+```
 
-Path: assignment03/Module_B/
+## Module B Validation Commands
 
-Implemented:
-- Flask API backend with RBAC/session enforcement for Module B workflows
-- Concurrency validation under parallel read/write and mixed-operation contention
-- Race-condition validation for single-winner invariants
-- Failure-injection testing at multiple transaction stages with rollback checks
-- Durability validation using fresh-process restart simulation checks
-- Stress testing (hundreds and thousands scale) with latency and invariants metrics
-- Observability validation for success/failure/denial audit paths
-- Test-run audit logging entries (`test_case` and `test_suite`) in `audit_logs`
+From repository root:
 
-Module B structure highlights:
-- tests: assignment03/Module_B/tests/
-- test result artifacts: assignment03/Module_B/test_results/
-- test runner: assignment03/Module_B/run_module_b_tests.py
+```bash
+python3 assignment-03/Module_B/run_module_b_tests.py
+```
 
-Run Module B validation from repository root:
+From `assignment-03/Module_B/`:
 
-/Users/devvrathans/college/semester-06/CS-432-2026/venv/bin/python assignment03/Module_B/run_module_b_tests.py
+```bash
+python3 run_module_b_tests.py
+python3 run_module_b_tests.py --run-stress-orchestrator
+```
 
-Run Module B validation from Module_B directory:
+Standalone stress orchestrator:
 
-/Users/devvrathans/college/semester-06/CS-432-2026/venv/bin/python run_module_b_tests.py
+```bash
+python3 run_stress_orchestrator.py
+```
 
-## Notes
+## Module B Output Artifacts
 
-- Local-only helper files are intentionally untracked via .gitignore.
-- Build/cache artifacts and virtual environments are excluded from version control.
+Generated under `assignment-03/Module_B/test_results/`:
+- per-suite test result files
+- stress phase metrics (`stress_phase_metrics.jsonl`)
+- stress telemetry (`stress_telemetry.jsonl`)
+- phase evaluation summary (`stress_phase_evaluation.json`)
+- orchestrator run summary (`stress_orchestrator_results.txt`)
+
+For complete Module B technical details, use:
+- `assignment-03/Module_B/README.md`

@@ -26,6 +26,6 @@ B+ Tree based database engine.
 - evidence/recovery-correctness-summary.md
 
 ## How To Run
-From assignment03/Module_A:
+From assignment-03/Module_A:
 
 python -m unittest test_bplustree.py test_dbmanager.py test_acid_validation.py test_restart_recovery.py test_observability.py test_hardening.py test_reliability_edge_cases.py
