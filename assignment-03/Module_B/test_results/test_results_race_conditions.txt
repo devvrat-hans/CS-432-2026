@@ -1,0 +1,14 @@
+TestModuleBRaceConditions Results
+Run started (UTC): 2026-04-05T09:02:24.700549+00:00
+========================================================================
+[PASS] assignment03.Module_B.tests.test_module_b_race_conditions.TestModuleBRaceConditions.test_repeated_race_rounds_consistent (485.610 ms)
+[PASS] assignment03.Module_B.tests.test_module_b_race_conditions.TestModuleBRaceConditions.test_single_winner_on_duplicate_record_key_insert (49.697 ms)
+[PASS] assignment03.Module_B.tests.test_module_b_race_conditions.TestModuleBRaceConditions.test_single_winner_on_token_consume (107.931 ms)
+
+========================================================================
+Run summary
+Total: 3
+PASS: 3
+FAIL: 0
+ERROR: 0
+Elapsed seconds: 0.6465

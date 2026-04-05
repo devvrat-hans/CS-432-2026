@@ -56,10 +56,3 @@
 {"created_at": "2026-03-22T10:05:32.977311+00:00", "actor_id": 2, "action": "direct_db_modification_detected", "target": "project_records", "status": "unauthorized", "details": "{\"saved_hash\": \"765f196d860e24ba1cd4bff9241379d1c72b6048868aa65816b4bc4e0ca0f703\", \"current_hash\": \"5d6335ac692d627c4d6811eb4a7325bda57937bacb72cc16cc25c5aad294be4d\", \"saved_row_count\": 13, \"current_row_count\": 13}"}
 {"created_at": "2026-03-22T10:08:50.527920+00:00", "actor_id": 2, "action": "logout", "target": "auth", "status": "success", "details": "Session ended"}
 {"created_at": "2026-03-22T10:09:00.838628+00:00", "actor_id": 3, "action": "login", "target": "auth", "status": "success", "details": "Session started"}
-{"created_at": "2026-03-22T10:09:29.222564+00:00", "actor_id": 3, "action": "logout", "target": "auth", "status": "success", "details": "Session ended"}
-{"created_at": "2026-03-22T10:10:06.507079+00:00", "actor_id": 1, "action": "login", "target": "auth", "status": "success", "details": "Session started"}
-{"created_at": "2026-03-22T10:10:08.549909+00:00", "actor_id": 1, "action": "logout", "target": "auth", "status": "success", "details": "Session ended"}
-{"created_at": "2026-03-22T10:10:14.844588+00:00", "actor_id": 1, "action": "login", "target": "auth", "status": "success", "details": "Session started"}
-{"created_at": "2026-04-02T14:53:03.019189+00:00", "actor_id": 1, "action": "login", "target": "auth", "status": "success", "details": "Session started"}
-{"created_at": "2026-04-04T18:26:50.170552+00:00", "actor_id": null, "action": "login", "target": "auth", "status": "denied", "details": "username=admin"}
-{"created_at": "2026-04-04T18:27:39.697580+00:00", "actor_id": 1, "action": "login", "target": "auth", "status": "success", "details": "Session started"}
