@@ -1,9 +1,9 @@
 TestModuleBRaceConditions Results
-Run started (UTC): 2026-04-05T10:36:08.195942+00:00
+Run started (UTC): 2026-04-05T11:40:11.448521+00:00
 ========================================================================
-[PASS] test_module_b_race_conditions.TestModuleBRaceConditions.test_repeated_race_rounds_consistent (688.457 ms)
-[PASS] test_module_b_race_conditions.TestModuleBRaceConditions.test_single_winner_on_duplicate_record_key_insert (51.538 ms)
-[PASS] test_module_b_race_conditions.TestModuleBRaceConditions.test_single_winner_on_token_consume (72.665 ms)
+[PASS] test_module_b_race_conditions.TestModuleBRaceConditions.test_repeated_race_rounds_consistent (648.320 ms)
+[PASS] test_module_b_race_conditions.TestModuleBRaceConditions.test_single_winner_on_duplicate_record_key_insert (53.369 ms)
+[PASS] test_module_b_race_conditions.TestModuleBRaceConditions.test_single_winner_on_token_consume (74.379 ms)
 
 ========================================================================
 Run summary
@@ -11,4 +11,4 @@ Total: 3
 PASS: 3
 FAIL: 0
 ERROR: 0
-Elapsed seconds: 0.8169
+Elapsed seconds: 0.7798

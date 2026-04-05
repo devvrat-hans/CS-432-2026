@@ -1,7 +1,9 @@
 try:
     from graphviz import Digraph
-except ImportError:  # Optional dependency used only for tree visualization.
+except ImportError:
     Digraph = None
+
+import copy
 
 
 class BPlusTreeNode:
@@ -26,7 +28,7 @@ class BPlusTree:
         if node.leaf:
             for i, k in enumerate(node.keys):
                 if k == key:
-                    return node.values[i]
+                    return copy.deepcopy(node.values[i])  # prevent mutation
             return None
 
         i = 0
@@ -36,10 +38,8 @@ class BPlusTree:
 
     # ---------------- INSERT ----------------
     def insert(self, key, value):
-        # Handle duplicate
         if self.search(key) is not None:
-            self.update(key, value)
-            return
+            raise ValueError(f"Duplicate key '{key}'")  
 
         root = self.root
 
@@ -93,7 +93,6 @@ class BPlusTree:
             node.keys = node.keys[:mid]
             node.values = node.values[:mid]
 
-            # Maintain leaf linkage
             new_node.next = node.next
             node.next = new_node
 
@@ -118,7 +117,6 @@ class BPlusTree:
 
         self._delete(self.root, key)
 
-        # Update root if empty
         if not self.root.leaf and len(self.root.keys) == 0:
             self.root = self.root.children[0]
 
@@ -208,7 +206,7 @@ class BPlusTree:
 
         for i, k in enumerate(node.keys):
             if k == key:
-                node.values[i] = new_value
+                node.values[i] = copy.deepcopy(new_value)  
                 return True
 
         return False
@@ -217,7 +215,6 @@ class BPlusTree:
     def range_query(self, start_key, end_key):
         node = self.root
 
-        # Go to first relevant leaf
         while not node.leaf:
             i = 0
             while i < len(node.keys) and start_key >= node.keys[i]:
@@ -226,11 +223,10 @@ class BPlusTree:
 
         result = []
 
-        # Traverse linked leaves
         while node:
             for i, k in enumerate(node.keys):
                 if start_key <= k <= end_key:
-                    result.append((k, node.values[i]))
+                    result.append((k, copy.deepcopy(node.values[i])))
                 elif k > end_key:
                     return result
             node = node.next
@@ -247,90 +243,52 @@ class BPlusTree:
         result = []
         while node:
             for i in range(len(node.keys)):
-                result.append((node.keys[i], node.values[i]))
+                result.append((node.keys[i], copy.deepcopy(node.values[i])))
             node = node.next
 
         return result
 
-    # # ---------------- VISUALIZATION ----------------
-    # def visualize_tree(self):
-    #     dot = Digraph()
-    #     self._add_nodes(dot, self.root)
-    #     self._add_edges(dot, self.root)
-    #     return dot
-
-    # def _add_nodes(self, dot, node):
-    #     node_id = str(id(node))
-    #     if node.leaf:
-    #         label = "Leaf\n" + "|".join(f"{k}:{v}" for k, v in zip(node.keys, node.values))
-    #     else:
-    #         label = "Internal\n" + "|".join(map(str, node.keys))
-
-    #     dot.node(node_id, label)
-
-    #     if not node.leaf:
-    #         for child in node.children:
-    #             self._add_nodes(dot, child)
-
-    # def _add_edges(self, dot, node):
-    #     node_id = str(id(node))
-
-    #     if not node.leaf:
-    #         for child in node.children:
-    #             dot.edge(node_id, str(id(child)))
-    #             self._add_edges(dot, child)
-
-    #     # Leaf linkage (dashed)
-    #     if node.leaf and node.next:
-    #         dot.edge(node_id, str(id(node.next)), style="dashed
+    # ---------------- VISUALIZATION ----------------
     def visualize_tree(self):
         if Digraph is None:
-            raise RuntimeError("graphviz package is required for visualize_tree()")
+            raise RuntimeError("Install graphviz to visualize")
 
         dot = Digraph()
-        dot.attr(rankdir='TB')  # Top to Bottom layout
-    
+        dot.attr(rankdir='TB')
+
         self._add_nodes(dot, self.root)
         self._add_edges(dot, self.root)
-        self._link_leaves(dot)   # NEW: separate leaf linkage
-    
+        self._link_leaves(dot)
+
         return dot
-    
-    
+
     def _add_nodes(self, dot, node):
         node_id = str(id(node))
-    
-        # Better label formatting
+
         if node.leaf:
-            label = "{Leaf | " + " | ".join(f"{k}" for k in node.keys) + "}"
+            label = "{Leaf | " + " | ".join(map(str, node.keys)) + "}"
         else:
             label = "{Internal | " + " | ".join(map(str, node.keys)) + "}"
-    
+
         dot.node(node_id, label, shape="record")
-    
+
         if not node.leaf:
             for child in node.children:
                 self._add_nodes(dot, child)
-    
-    
+
     def _add_edges(self, dot, node):
         node_id = str(id(node))
-    
+
         if not node.leaf:
             for child in node.children:
-                child_id = str(id(child))
-                dot.edge(node_id, child_id)   # parent-child
+                dot.edge(node_id, str(id(child)))
                 self._add_edges(dot, child)
-    
-    
-    # 🔥 NEW FUNCTION (IMPORTANT FOR PROFESSOR REQUIREMENT)
+
     def _link_leaves(self, dot):
-        # Go to leftmost leaf
         node = self.root
         while not node.leaf:
             node = node.children[0]
-    
-        # Traverse all leaves
+
         while node and node.next:
             dot.edge(
                 str(id(node)),

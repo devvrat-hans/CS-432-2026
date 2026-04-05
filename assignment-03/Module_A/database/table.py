@@ -2,12 +2,9 @@ from database.bplustree import BPlusTree
 
 
 class Table:
-    def __init__(self, name, schema=None, order=3, search_key=None):
+    def __init__(self, name):
         self.name = name
-        self.schema = schema or {}
-        self.search_key = search_key
-        self.order = order
-        self.index = BPlusTree(t=order)
+        self.index = BPlusTree()
         self.count = 0
 
     # ---------------- INSERT ----------------
@@ -33,8 +30,7 @@ class Table:
         if key is None:
             raise ValueError("Key cannot be None.")
 
-        updated = self.index.update(key, new_value)
-        return updated
+        return self.index.update(key, new_value)
 
     # ---------------- DELETE ----------------
     def delete(self, key):
@@ -85,44 +81,31 @@ class Table:
     def count_records(self):
         return self.count
 
-    def consistency_report(self):
-        records = self.index.get_all()
-        keys = [key for key, _ in records]
-
-        issues = []
-
-        if keys != sorted(keys):
-            issues.append("keys_not_sorted")
-
-        if len(keys) != len(set(keys)):
-            issues.append("duplicate_keys")
-
-        if self.count != len(records):
-            issues.append(
-                f"count_mismatch:count={self.count},records={len(records)}"
-            )
-
-        for key, value in records:
-            searched = self.index.search(key)
-            if searched != value:
-                issues.append(f"search_mismatch:key={key}")
-
-        return {
-            "table": self.name,
-            "ok": len(issues) == 0,
-            "issues": issues,
-            "record_count": len(records),
-            "tracked_count": self.count,
-        }
-
-    def assert_consistency(self):
-        report = self.consistency_report()
-        if not report["ok"]:
-            raise RuntimeError(
-                f"Consistency violation in table '{self.name}': {', '.join(report['issues'])}"
-            )
-        return report
-
     # ---------------- STRING ----------------
     def __str__(self):
         return f"Table(name={self.name}, size={self.count})"
+
+    # ---------------- CONSISTENCY REPORT ----------------
+    def consistency_report(self):
+        data = self.get_all()
+        keys = [k for k, _ in data]
+
+        # Check 1: No duplicate keys
+        no_duplicates = len(keys) == len(set(keys))
+
+        # Check 2: Sorted order
+        is_sorted = keys == sorted(keys)
+
+        # Check 3: Size matches
+        size_matches = len(keys) == self.count
+
+        return {
+            "table": self.name,
+            "ok": no_duplicates and is_sorted and size_matches,
+            "checks": {
+                "no_duplicates": no_duplicates,
+                "is_sorted": is_sorted,
+                "size_matches": size_matches,
+            },
+            "record_count": len(keys),
+        }

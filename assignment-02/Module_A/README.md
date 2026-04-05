@@ -68,8 +68,8 @@ db_management_system/
 
 ### 1. Clone the Repository
 ```bash
-git clone <your-repo-link>
-cd db_management_system
+git clone https://github.com/devvrat-hans/CS-432-2026.git
+cd CS-432-2026/assignment-02/Module_A
 ```
 2. Install Python Dependencies
 ```bash

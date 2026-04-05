@@ -1,10 +1,10 @@
 Module B Multi-User Test Results
-Run started (UTC): 2026-04-05T10:36:14.717364+00:00
+Run started (UTC): 2026-04-05T11:40:18.356996+00:00
 ========================================================================
-[PASS] test_module_b_multiuser.TestModuleBMultiUserBehavior.test_failure_simulation_rolls_back_without_partial_data (8.262 ms)
-[PASS] test_module_b_multiuser.TestModuleBMultiUserBehavior.test_parallel_admin_user_sessions_enforce_rbac_isolation (379.759 ms)
-[PASS] test_module_b_multiuser.TestModuleBMultiUserBehavior.test_race_condition_single_consumer_wins (87.965 ms)
-[PASS] test_module_b_multiuser.TestModuleBMultiUserBehavior.test_stress_insert_hundreds_of_requests (943.109 ms)
+[PASS] test_module_b_multiuser.TestModuleBMultiUserBehavior.test_failure_simulation_rolls_back_without_partial_data (10.332 ms)
+[PASS] test_module_b_multiuser.TestModuleBMultiUserBehavior.test_parallel_admin_user_sessions_enforce_rbac_isolation (507.326 ms)
+[PASS] test_module_b_multiuser.TestModuleBMultiUserBehavior.test_race_condition_single_consumer_wins (97.613 ms)
+[PASS] test_module_b_multiuser.TestModuleBMultiUserBehavior.test_stress_insert_hundreds_of_requests (875.564 ms)
 
 ========================================================================
 Run summary
@@ -12,4 +12,4 @@ Total: 4
 PASS: 4
 FAIL: 0
 ERROR: 0
-Elapsed seconds: 1.4313
+Elapsed seconds: 1.4958

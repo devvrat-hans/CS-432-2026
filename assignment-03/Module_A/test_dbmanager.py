@@ -1,74 +1,36 @@
 from database.db_manager import DBManager
 
 db = DBManager()
+db.tables = {}
 
-print("\n--- CREATE TABLE ---")
-db.create_table("students")
-print("Tables:", db.list_tables())
+print("\n=== DB MANAGER DEMO ===")
 
-print("\n--- INSERT ---")
-db.insert("students", 1, "Alice")
-db.insert("students", 2, "Bob")
-print("Inserted records")
+# create table
+tx = db.begin()
+if "students" not in db.get_all_tables():
+    db.create_table(tx, "students")
 
-print("\n--- SEARCH ---")
-print("Search 1:", db.search("students", 1))
-print("Search 2:", db.search("students", 2))
-print("Search 3 (not exists):", db.search("students", 3))
+# insert
+tx = db.begin()
+db.insert(tx, "students", 1, "Alice")
 
-print("\n--- UPDATE ---")
-db.update("students", 1, "Alicia")
-print("Updated 1:", db.search("students", 1))
+tx = db.begin()
+db.insert(tx, "students", 2, "Bob")
 
-print("\n--- DELETE ---")
-db.delete("students", 2)
-print("After delete 2:", db.search("students", 2))
+print("After insert:", db.get_all("students"))
 
-print("\n--- RANGE QUERY ---")
-db.insert("students", 3, "Charlie")
-db.insert("students", 4, "David")
-print("Range 1-3:", db.range_query("students", 1, 3))
+# update
+tx = db.begin()
+db.update(tx, "students", 1, "Alicia")
 
-print("\n--- GET ALL ---")
-print("All records:", db.get_all("students"))
+print("After update:", db.get_all("students"))
 
-print("\n--- DUPLICATE INSERT (EDGE CASE) ---")
-try:
-    db.insert("students", 1, "Duplicate")
-except Exception as e:
-    print("Duplicate handled:", e)
+# delete
+tx = db.begin()
+db.delete(tx, "students", 2)
 
-print("\n--- UPDATE NON-EXISTING ---")
-try:
-    db.update("students", 100, "Ghost")
-except Exception as e:
-    print("Update error handled:", e)
+print("After delete:", db.get_all("students"))
 
-print("\n--- DELETE NON-EXISTING ---")
-try:
-    db.delete("students", 100)
-except Exception as e:
-    print("Delete error handled:", e)
+print("Range query:", db.range_query("students", 1, 3))
 
-print("\n--- INVALID RANGE ---")
-try:
-    db.range_query("students", 5, 1)
-except Exception as e:
-    print("Range error handled:", e)
-
-print("\n--- TABLE SIZE ---")
-print("Size:", db.table_size("students"))
-
-print("\n--- VISUALIZATION ---")
-tree = db._get_table("students").index.visualize_tree()
-tree
-
-print("\n--- DROP TABLE ---")
-db.drop_table("students")
-print("Tables after drop:", db.list_tables())
-
-print("\n--- ACCESS DROPPED TABLE ---")
-try:
-    db.search("students", 1)
-except Exception as e:
-    print("Access error handled:", e)
+print(" DEMO COMPLETED")

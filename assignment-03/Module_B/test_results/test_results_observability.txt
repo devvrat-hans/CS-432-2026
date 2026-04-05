@@ -1,7 +1,7 @@
 TestModuleBObservability Results
-Run started (UTC): 2026-04-05T10:36:09.168122+00:00
+Run started (UTC): 2026-04-05T11:40:12.388170+00:00
 ========================================================================
-[PASS] test_module_b_observability.TestModuleBObservability.test_mutation_audit_logs_cover_success_failure_and_denial (10.065 ms)
+[PASS] test_module_b_observability.TestModuleBObservability.test_mutation_audit_logs_cover_success_failure_and_denial (8.855 ms)
 
 ========================================================================
 Run summary
@@ -9,4 +9,4 @@ Total: 1
 PASS: 1
 FAIL: 0
 ERROR: 0
-Elapsed seconds: 0.0120
+Elapsed seconds: 0.0100

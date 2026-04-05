@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-04-05T10:31:04.603298+00:00",
+  "generated_at_utc": "2026-04-05T11:40:26.312122+00:00",
   "phase_count": 7,
   "phase_summaries": [
     {
@@ -30,13 +30,26 @@
           "metric_phase_name": "high_volume_parallel_insert_stress",
           "observed": {
             "invariant_violations": 0,
-            "p95_latency_ms": 248.8544579991867,
+            "p95_latency_ms": 241.95720900024753,
             "success_count": 600,
             "success_rate": 1.0,
             "total_requests": 600
           },
           "reasons": [],
-          "recorded_at_utc": "2026-04-05T10:30:59.835867+00:00",
+          "recorded_at_utc": "2026-04-05T11:40:14.276342+00:00",
+          "status": "pass"
+        },
+        {
+          "metric_phase_name": "high_volume_parallel_insert_stress",
+          "observed": {
+            "invariant_violations": 0,
+            "p95_latency_ms": 252.96608400094556,
+            "success_count": 600,
+            "success_rate": 1.0,
+            "total_requests": 600
+          },
+          "reasons": [],
+          "recorded_at_utc": "2026-04-05T11:40:21.693098+00:00",
           "status": "pass"
         }
       ],
@@ -64,13 +77,26 @@
           "metric_phase_name": "many_unique_token_consumptions_under_load",
           "observed": {
             "invariant_violations": 0,
-            "p95_latency_ms": 260.986999999659,
+            "p95_latency_ms": 263.96487500096555,
             "success_count": 120,
             "success_rate": 1.0,
             "total_requests": 120
           },
           "reasons": [],
-          "recorded_at_utc": "2026-04-05T10:31:00.699870+00:00",
+          "recorded_at_utc": "2026-04-05T11:40:15.688175+00:00",
+          "status": "pass"
+        },
+        {
+          "metric_phase_name": "many_unique_token_consumptions_under_load",
+          "observed": {
+            "invariant_violations": 0,
+            "p95_latency_ms": 265.88312500098255,
+            "success_count": 120,
+            "success_rate": 1.0,
+            "total_requests": 120
+          },
+          "reasons": [],
+          "recorded_at_utc": "2026-04-05T11:40:22.352303+00:00",
           "status": "pass"
         }
       ],
@@ -98,13 +124,26 @@
           "metric_phase_name": "sustained_read_stress_consistency",
           "observed": {
             "invariant_violations": 0,
-            "p95_latency_ms": 0.8526669989805669,
+            "p95_latency_ms": 1.0118329992110375,
             "success_count": 700,
             "success_rate": 1.0,
             "total_requests": 700
           },
           "reasons": [],
-          "recorded_at_utc": "2026-04-05T10:31:01.631559+00:00",
+          "recorded_at_utc": "2026-04-05T11:40:16.678115+00:00",
+          "status": "pass"
+        },
+        {
+          "metric_phase_name": "sustained_read_stress_consistency",
+          "observed": {
+            "invariant_violations": 0,
+            "p95_latency_ms": 1.0966250010824297,
+            "success_count": 700,
+            "success_rate": 1.0,
+            "total_requests": 700
+          },
+          "reasons": [],
+          "recorded_at_utc": "2026-04-05T11:40:23.360665+00:00",
           "status": "pass"
         }
       ],
@@ -129,42 +168,81 @@
       "failures": 0,
       "metric_evaluations": [
         {
-          "metric_phase_name": "thousands_scale_insert_metrics",
-          "observed": {
-            "invariant_violations": 0,
-            "p95_latency_ms": 151.85491600095702,
-            "success_count": 1000,
-            "success_rate": 1.0,
-            "total_requests": 1000
-          },
-          "reasons": [],
-          "recorded_at_utc": "2026-04-05T10:31:03.288082+00:00",
-          "status": "pass"
-        },
-        {
           "metric_phase_name": "hotspot_parallel_updates",
           "observed": {
             "invariant_violations": 0,
-            "p95_latency_ms": 327.68183300140663,
+            "p95_latency_ms": 270.77166700109956,
             "success_count": 180,
             "success_rate": 1.0,
             "total_requests": 180
           },
           "reasons": [],
-          "recorded_at_utc": "2026-04-05T10:31:03.881261+00:00",
+          "recorded_at_utc": "2026-04-05T11:40:14.942271+00:00",
           "status": "pass"
         },
         {
           "metric_phase_name": "hotspot_duplicate_creates",
           "observed": {
             "invariant_violations": 0,
-            "p95_latency_ms": 83.05762500094716,
+            "p95_latency_ms": 81.19454199913889,
             "success_count": 90,
             "success_rate": 1.0,
             "total_requests": 90
           },
           "reasons": [],
-          "recorded_at_utc": "2026-04-05T10:31:03.881377+00:00",
+          "recorded_at_utc": "2026-04-05T11:40:14.942388+00:00",
+          "status": "pass"
+        },
+        {
+          "metric_phase_name": "thousands_scale_insert_metrics",
+          "observed": {
+            "invariant_violations": 0,
+            "p95_latency_ms": 151.0444160012412,
+            "success_count": 1000,
+            "success_rate": 1.0,
+            "total_requests": 1000
+          },
+          "reasons": [],
+          "recorded_at_utc": "2026-04-05T11:40:18.349827+00:00",
+          "status": "pass"
+        },
+        {
+          "metric_phase_name": "thousands_scale_insert_metrics",
+          "observed": {
+            "invariant_violations": 0,
+            "p95_latency_ms": 168.5289589986496,
+            "success_count": 1000,
+            "success_rate": 1.0,
+            "total_requests": 1000
+          },
+          "reasons": [],
+          "recorded_at_utc": "2026-04-05T11:40:25.079927+00:00",
+          "status": "pass"
+        },
+        {
+          "metric_phase_name": "hotspot_parallel_updates",
+          "observed": {
+            "invariant_violations": 0,
+            "p95_latency_ms": 255.67716700243182,
+            "success_count": 180,
+            "success_rate": 1.0,
+            "total_requests": 180
+          },
+          "reasons": [],
+          "recorded_at_utc": "2026-04-05T11:40:25.747221+00:00",
+          "status": "pass"
+        },
+        {
+          "metric_phase_name": "hotspot_duplicate_creates",
+          "observed": {
+            "invariant_violations": 0,
+            "p95_latency_ms": 92.26387500166311,
+            "success_count": 90,
+            "success_rate": 1.0,
+            "total_requests": 90
+          },
+          "reasons": [],
+          "recorded_at_utc": "2026-04-05T11:40:25.747379+00:00",
           "status": "pass"
         }
       ],
@@ -192,52 +270,104 @@
           "metric_phase_name": "failure_injection_parallel_path",
           "observed": {
             "invariant_violations": 0,
-            "p95_latency_ms": 210.78383299936831,
+            "p95_latency_ms": 272.45795899943914,
             "success_count": 40,
             "success_rate": 1.0,
             "total_requests": 40
           },
           "reasons": [],
-          "recorded_at_utc": "2026-04-05T10:31:04.476281+00:00",
+          "recorded_at_utc": "2026-04-05T11:40:13.082613+00:00",
           "status": "pass"
         },
         {
           "metric_phase_name": "success_parallel_path",
           "observed": {
             "invariant_violations": 0,
-            "p95_latency_ms": 37.50837500047055,
+            "p95_latency_ms": 64.01700000060373,
             "success_count": 40,
             "success_rate": 1.0,
             "total_requests": 40
           },
           "reasons": [],
-          "recorded_at_utc": "2026-04-05T10:31:04.476373+00:00",
+          "recorded_at_utc": "2026-04-05T11:40:13.082714+00:00",
           "status": "pass"
         },
         {
           "metric_phase_name": "retry_after_failure_path",
           "observed": {
             "invariant_violations": 0,
-            "p95_latency_ms": 1.277082999877166,
+            "p95_latency_ms": 1.3694170011149254,
             "success_count": 40,
             "success_rate": 1.0,
             "total_requests": 40
           },
           "reasons": [],
-          "recorded_at_utc": "2026-04-05T10:31:04.476419+00:00",
+          "recorded_at_utc": "2026-04-05T11:40:13.082766+00:00",
           "status": "pass"
         },
         {
           "metric_phase_name": "retry_idempotency_path",
           "observed": {
             "invariant_violations": 0,
-            "p95_latency_ms": 0.5285410006763414,
+            "p95_latency_ms": 0.46395800018217415,
             "success_count": 40,
             "success_rate": 1.0,
             "total_requests": 40
           },
           "reasons": [],
-          "recorded_at_utc": "2026-04-05T10:31:04.476464+00:00",
+          "recorded_at_utc": "2026-04-05T11:40:13.082814+00:00",
+          "status": "pass"
+        },
+        {
+          "metric_phase_name": "failure_injection_parallel_path",
+          "observed": {
+            "invariant_violations": 0,
+            "p95_latency_ms": 125.58325000281911,
+            "success_count": 40,
+            "success_rate": 1.0,
+            "total_requests": 40
+          },
+          "reasons": [],
+          "recorded_at_utc": "2026-04-05T11:40:26.215969+00:00",
+          "status": "pass"
+        },
+        {
+          "metric_phase_name": "success_parallel_path",
+          "observed": {
+            "invariant_violations": 0,
+            "p95_latency_ms": 114.66195799948764,
+            "success_count": 40,
+            "success_rate": 1.0,
+            "total_requests": 40
+          },
+          "reasons": [],
+          "recorded_at_utc": "2026-04-05T11:40:26.216056+00:00",
+          "status": "pass"
+        },
+        {
+          "metric_phase_name": "retry_after_failure_path",
+          "observed": {
+            "invariant_violations": 0,
+            "p95_latency_ms": 1.2313330007600598,
+            "success_count": 40,
+            "success_rate": 1.0,
+            "total_requests": 40
+          },
+          "reasons": [],
+          "recorded_at_utc": "2026-04-05T11:40:26.216111+00:00",
+          "status": "pass"
+        },
+        {
+          "metric_phase_name": "retry_idempotency_path",
+          "observed": {
+            "invariant_violations": 0,
+            "p95_latency_ms": 0.4666249988076743,
+            "success_count": 40,
+            "success_rate": 1.0,
+            "total_requests": 40
+          },
+          "reasons": [],
+          "recorded_at_utc": "2026-04-05T11:40:26.216162+00:00",
           "status": "pass"
         }
       ],

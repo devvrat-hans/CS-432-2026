@@ -1,6 +1,7 @@
 import copy
 import json
 import os
+import threading
 from datetime import datetime, timezone
 
 from database.table import Table
@@ -13,6 +14,7 @@ class DBManager:
         self.transaction_history = []
         self.trace_logs = []
         self.max_trace_entries = 5000
+        self.lock = threading.Lock()
         self.failure_injection = {
             "enabled": False,
             "checkpoint": None,
@@ -36,6 +38,12 @@ class DBManager:
     def _begin_transaction(self, operation, table_name=None):
         tx = TransactionContext(operation=operation, table_name=table_name)
         tx.activate()
+        
+        self._append_wal_events([{
+        "transaction_id": tx.transaction_id,
+        "timestamp": self._now_iso(),
+        "type": "BEGIN"
+    }])
         self._trace_event(
             transaction_id=tx.transaction_id,
             phase="transaction_begin",
@@ -44,8 +52,19 @@ class DBManager:
         return tx
 
     def _commit_transaction(self, tx):
+        if not tx.is_active():
+        # Already committed → ignore (idempotent)
+            return
+
         tx.commit()
         self.transaction_history.append(tx)
+
+        self._append_wal_events([{
+            "transaction_id": tx.transaction_id,
+            "timestamp": self._now_iso(),
+            "type": "COMMIT"
+        }])
+
         self._trace_event(
             transaction_id=tx.transaction_id,
             phase="transaction_commit",
@@ -103,6 +122,23 @@ class DBManager:
             logs = logs[-limit:]
 
         return list(logs)
+    
+    # ---------------- PUBLIC TRANSACTION API ----------------
+
+    def begin(self):
+        return self._begin_transaction("manual")
+
+    def commit(self, tx):
+        if not tx.is_active():
+            raise RuntimeError("Transaction is not active")
+
+    def rollback(self, tx):
+        if not tx.is_active():
+            raise RuntimeError("Transaction is not active")
+        return self._rollback_transaction(tx)
+
+    def get_all_tables(self):
+        return list(self.tables.keys())
 
     def _summarize_recovery_report(self, report):
         summary_text = (
@@ -130,84 +166,108 @@ class DBManager:
         return copy.deepcopy(self.tables)
 
     def _run_staged_mutation(self, tx, mutation_fn):
-        baseline_tables = self._clone_tables_state()
-        staged_tables = self._clone_tables_state()
-        self._trace_event(
-            transaction_id=tx.transaction_id,
-            phase="staged_mutation_start",
-            details={"operation": tx.operation, "table_name": tx.table_name},
-        )
+        if not tx.is_active():
+            raise RuntimeError("Transaction is not active")
 
-        try:
-            result = mutation_fn(staged_tables)
-            self._check_failure_checkpoint("after_index_write")
+        with self.lock:   #  WHOLE FUNCTION INSIDE
+
+            baseline_tables = self._clone_tables_state()
+            staged_tables = self._clone_tables_state()
+
             self._trace_event(
                 transaction_id=tx.transaction_id,
-                phase="index_write_complete",
+                phase="staged_mutation_start",
                 details={"operation": tx.operation, "table_name": tx.table_name},
             )
-
-            # WAL-before-data ordering for durability/recovery semantics.
-            staged_events = self._build_wal_events(tx, staged_tables, status="staged")
-            self._append_wal_events(staged_events)
-            self._check_failure_checkpoint("after_log_write")
-            self._trace_event(
-                transaction_id=tx.transaction_id,
-                phase="wal_staged_written",
-                details={"event_count": len(staged_events)},
-            )
-
-            self.tables = staged_tables
-            self._check_failure_checkpoint("after_data_write")
-            self._assert_database_consistency(context=f"post-commit:{tx.operation}")
-            self._trace_event(
-                transaction_id=tx.transaction_id,
-                phase="data_write_complete",
-                details={"operation": tx.operation, "table_name": tx.table_name},
-            )
-
-            self._check_failure_checkpoint("before_commit_marker")
-            self._commit_transaction(tx)
-
-            committed_events = self._build_wal_events(tx, self.tables, status="committed")
-            self._append_wal_events(committed_events)
-            self._trace_event(
-                transaction_id=tx.transaction_id,
-                phase="wal_committed_written",
-                details={"event_count": len(committed_events)},
-            )
-            return result
-        except Exception as error:
-            # Robust rollback path for partially-applied states.
-            rollback_validation_error = None
-            self.tables = baseline_tables
 
             try:
-                self._assert_database_consistency(context=f"post-rollback:{tx.operation}")
-            except Exception as consistency_error:
-                rollback_validation_error = consistency_error
+                result = mutation_fn(staged_tables)
+
+                self._check_failure_checkpoint("after_index_write")
+
                 self._trace_event(
                     transaction_id=tx.transaction_id,
-                    phase="rollback_consistency_validation_failed",
-                    details={"error": str(consistency_error)},
+                    phase="index_write_complete",
+                    details={"operation": tx.operation, "table_name": tx.table_name},
                 )
 
-            tx.mark_failed(str(error))
-            self._rollback_transaction(tx)
-            rollback_events = self._build_rollback_wal_events(tx)
-            self._append_wal_events(rollback_events)
-            self._trace_event(
-                transaction_id=tx.transaction_id,
-                phase="rollback_complete",
-                details={"error": str(error), "event_count": len(rollback_events)},
-            )
+                staged_events = self._build_wal_events(tx, staged_tables, status="staged")
+                self._append_wal_events(staged_events)
 
-            if rollback_validation_error is not None:
-                raise RuntimeError(
-                    f"Mutation failed: {error}; rollback validation failed: {rollback_validation_error}"
-                ) from error
+                self._check_failure_checkpoint("after_log_write")
 
-            raise
+                self._trace_event(
+                    transaction_id=tx.transaction_id,
+                    phase="wal_staged_written",
+                    details={"event_count": len(staged_events)},
+                )
+
+                
+                self._validate_constraints(staged_tables)
+                self._check_failure_checkpoint("after_data_write")
+                self.tables = staged_tables
+                self._assert_database_consistency(
+                    context=f"post-commit:{tx.operation}"
+                )
+
+                self._trace_event(
+                    transaction_id=tx.transaction_id,
+                    phase="data_write_complete",
+                    details={"operation": tx.operation, "table_name": tx.table_name},
+                )
+
+                self._check_failure_checkpoint("before_commit_marker")
+
+                committed_events = self._build_wal_events(
+                    tx, self.tables, status="committed"
+                )
+                self._append_wal_events(committed_events)
+                self._commit_transaction(tx)
+
+                self._trace_event(
+                    transaction_id=tx.transaction_id,
+                    phase="wal_committed_written",
+                    details={"event_count": len(committed_events)},
+                )
+
+                return result
+
+            except Exception as error:
+                rollback_validation_error = None
+
+                self.tables = baseline_tables
+
+                try:
+                    self._assert_database_consistency(
+                        context=f"post-rollback:{tx.operation}"
+                    )
+                except Exception as consistency_error:
+                    rollback_validation_error = consistency_error
+
+                    self._trace_event(
+                        transaction_id=tx.transaction_id,
+                        phase="rollback_consistency_validation_failed",
+                        details={"error": str(consistency_error)},
+                    )
+
+                tx.mark_failed(str(error))
+                self._rollback_transaction(tx)
+
+                rollback_events = self._build_rollback_wal_events(tx)
+                self._append_wal_events(rollback_events)
+
+                self._trace_event(
+                    transaction_id=tx.transaction_id,
+                    phase="rollback_complete",
+                    details={"error": str(error), "event_count": len(rollback_events)},
+                )
+
+                if rollback_validation_error is not None:
+                    raise RuntimeError(
+                        f"Mutation failed: {error}; rollback validation failed: {rollback_validation_error}"
+                    ) from error
+
+                raise
 
     def configure_failure_injection(self, checkpoint, trigger_after_hits=1):
         valid = {
@@ -583,11 +643,29 @@ class DBManager:
             report["incomplete_tx_ids"].append(tx_id)
 
         return report
+    def _validate_constraints(self, tables):
+        for table_name, table in tables.items():
+            for key, value in table.get_all():
+
+                if isinstance(value, dict):
+
+                    #  Balance constraint
+                    if "balance" in value and value["balance"] < 0:
+                        raise ValueError(
+                            f"Negative balance not allowed in table '{table_name}'"
+                        )
+
+                    #  Stock constraint
+                    if "stock" in value and value["stock"] < 0:
+                        raise ValueError(
+                            f"Negative stock not allowed in table '{table_name}'"
+                        )
 
     # ---------------- TABLE MANAGEMENT ----------------
 
-    def create_table(self, name, schema=None, order=3, search_key=None):
-        tx = self._begin_transaction("create_table", table_name=name)
+    def create_table(self, tx, name, schema=None, order=3, search_key=None):
+        if not tx.is_active():
+            raise RuntimeError("Transaction is not active")
         tx.add_affected_entity("table", name)
         tx.add_before_snapshot("table", name, before_value=self.tables.get(name))
 
@@ -598,14 +676,15 @@ class DBManager:
             if name in staged_tables:
                 raise ValueError(f"Table '{name}' already exists in database '__default__'")
 
-            table = Table(name, schema=schema, order=order, search_key=search_key)
+            table = Table(name)
             staged_tables[name] = table
             return table
 
         return self._run_staged_mutation(tx, mutation)
 
-    def drop_table(self, name):
-        tx = self._begin_transaction("drop_table", table_name=name)
+    def drop_table(self,tx,  name):
+        if not tx.is_active():
+            raise RuntimeError("Transaction is not active")
         tx.add_affected_entity("table", name)
         tx.add_before_snapshot("table", name, before_value=self.tables.get(name))
 
@@ -616,7 +695,7 @@ class DBManager:
             del staged_tables[name]
             return True
 
-        self._run_staged_mutation(tx, mutation)
+        return self._run_staged_mutation(tx, mutation)
 
     def list_tables(self):
         return list(self.tables.keys())
@@ -631,9 +710,10 @@ class DBManager:
 
     # ---------------- CRUD ----------------
 
-    def insert(self, table_name, key, value):
-        tx = self._begin_transaction("insert", table_name=table_name)
-        tx.add_affected_entity("table", table_name, key=key)
+    def insert(self, tx, table_name, key, value):
+        if not tx.is_active():
+            raise RuntimeError("Transaction is not active")
+        tx.add_affected_entity("record", table_name, key=key)
 
         table = self._get_table(table_name)
         before_value = table.search(key)
@@ -644,15 +724,16 @@ class DBManager:
             staged_table.insert(key, value)
             return True
 
-        self._run_staged_mutation(tx, mutation)
+        return self._run_staged_mutation(tx, mutation)
 
     def search(self, table_name, key):
         table = self._get_table(table_name)
         return table.search(key)
 
-    def update(self, table_name, key, new_value):
-        tx = self._begin_transaction("update", table_name=table_name)
-        tx.add_affected_entity("table", table_name, key=key)
+    def update(self, tx, table_name, key, new_value):
+        if not tx.is_active():
+            raise RuntimeError("Transaction is not active")
+        tx.add_affected_entity("record", table_name, key=key)
 
         table = self._get_table(table_name)
         before_value = table.search(key)
@@ -667,9 +748,10 @@ class DBManager:
 
         return self._run_staged_mutation(tx, mutation)
 
-    def delete(self, table_name, key):
-        tx = self._begin_transaction("delete", table_name=table_name)
-        tx.add_affected_entity("table", table_name, key=key)
+    def delete(self, tx, table_name, key):
+        if not tx.is_active():
+            raise RuntimeError("Transaction is not active")
+        tx.add_affected_entity("record", table_name, key=key)
 
         table = self._get_table(table_name)
         before_value = table.search(key)
@@ -699,8 +781,10 @@ class DBManager:
 
     # ---------------- BULK ----------------
 
-    def bulk_insert(self, table_name, records):
-        tx = self._begin_transaction("bulk_insert", table_name=table_name)
+    def bulk_insert(self,tx, table_name, records):
+        if not tx.is_active():
+            raise RuntimeError("Transaction is not active")
+
         tx.add_affected_entity("table", table_name)
 
         table = self._get_table(table_name)
@@ -725,7 +809,7 @@ class DBManager:
 
             return True
 
-        self._run_staged_mutation(tx, mutation)
+        return self._run_staged_mutation(tx, mutation)
 
     # ---------------- INFO ----------------
 

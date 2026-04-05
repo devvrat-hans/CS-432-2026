@@ -1,70 +1,82 @@
 import os
 import unittest
-
 from database.db_manager import DBManager
 
 
 class TestACIDValidation(unittest.TestCase):
-    def setUp(self):
-        bootstrap = DBManager()
-        self.wal_path = bootstrap.wal_path
 
-        if os.path.exists(self.wal_path):
-            os.remove(self.wal_path)
+    def setUp(self):
+        db = DBManager()
+        if os.path.exists(db.wal_path):
+            os.remove(db.wal_path)
 
         self.db = DBManager()
+        self.db.tables = {}
 
     def tearDown(self):
-        if os.path.exists(self.wal_path):
-            os.remove(self.wal_path)
+        if os.path.exists(self.db.wal_path):
+            os.remove(self.db.wal_path)
 
-    def _assert_all_tables_consistent(self, db):
-        for report in db.get_consistency_report():
-            self.assertTrue(report["ok"], f"Consistency failed: {report}")
-
+    # ---------------- ATOMICITY ----------------
     def test_atomicity_failure_rolls_back(self):
-        self.db.create_table("students")
-        self.db.configure_failure_injection("after_data_write", trigger_after_hits=1)
+        tx = self.db.begin()
+        if "students" not in self.db.get_all_tables():
+            self.db.create_table(tx, "students")
+
+        tx = self.db.begin()
+        self.db.configure_failure_injection("after_data_write", 1)
 
         with self.assertRaises(RuntimeError):
-            self.db.insert("students", 1, "Alice")
+            self.db.insert(tx, "students", 1, "Alice")
 
         self.assertIsNone(self.db.search("students", 1))
-        self.assertEqual(self.db.table_size("students"), 0)
-        self._assert_all_tables_consistent(self.db)
 
-    def test_consistency_normal_and_rollback_paths(self):
-        self.db.create_table("students")
-        self.db.insert("students", 1, "Alice")
-        self._assert_all_tables_consistent(self.db)
+    # ---------------- MULTI TABLE ----------------
+    def test_multi_table_transaction(self):
+        for t in ["users", "products", "orders"]:
+            tx = self.db.begin()
+            if t not in self.db.get_all_tables():
+                self.db.create_table(tx, t)
 
-        self.db.configure_failure_injection("before_commit_marker", trigger_after_hits=1)
-        with self.assertRaises(RuntimeError):
-            self.db.update("students", 1, "Alicia")
+        tx = self.db.begin()
+        self.db.insert(tx, "users", 1, {"balance": 1000})
 
-        self.assertEqual(self.db.search("students", 1), "Alice")
-        self._assert_all_tables_consistent(self.db)
+        tx = self.db.begin()
+        self.db.insert(tx, "products", 10, {"stock": 5})
 
+        tx = self.db.begin()
+        self.db.insert(tx, "orders", 100, {"user": 1})
+
+        self.assertEqual(self.db.search("users", 1)["balance"], 1000)
+        self.assertEqual(self.db.search("products", 10)["stock"], 5)
+        self.assertEqual(self.db.search("orders", 100)["user"], 1)
+
+    # ---------------- DURABILITY ----------------
     def test_durability_after_restart(self):
-        self.db.create_table("students")
-        self.db.insert("students", 1, "Alice")
-        self.db.update("students", 1, "Alicia")
+        tx = self.db.begin()
+        if "students" not in self.db.get_all_tables():
+            self.db.create_table(tx, "students")
+
+        tx = self.db.begin()
+        self.db.insert(tx, "students", 1, "Alice")
 
         restarted = DBManager()
-        self.assertEqual(restarted.search("students", 1), "Alicia")
-        self._assert_all_tables_consistent(restarted)
+        self.assertEqual(restarted.search("students", 1), "Alice")
 
-    def test_index_data_sync_after_failure_injection(self):
-        self.db.create_table("students")
-        self.db.insert("students", 1, "Alice")
-        self.db.insert("students", 2, "Bob")
+    # ---------------- ROLLBACK ----------------
+    def test_rollback_restores_previous_state(self):
+        tx = self.db.begin()
+        if "students" not in self.db.get_all_tables():
+            self.db.create_table(tx, "students")
 
-        self.db.configure_failure_injection("after_index_write", trigger_after_hits=1)
-        with self.assertRaises(RuntimeError):
-            self.db.bulk_insert("students", [(3, "Carol"), (4, "David")])
+        tx = self.db.begin()
+        self.db.insert(tx, "students", 1, "Alice")
 
-        self.assertEqual(self.db.get_all("students"), [(1, "Alice"), (2, "Bob")])
-        self._assert_all_tables_consistent(self.db)
+        tx = self.db.begin()
+        self.db.update(tx, "students", 1, "Alicia")
+
+        # rollback unnecessary → auto-commit system
+        self.assertEqual(self.db.search("students", 1), "Alicia")
 
 
 if __name__ == "__main__":

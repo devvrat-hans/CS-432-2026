@@ -1,11 +1,11 @@
 TestModuleBFailureSimulation Results
-Run started (UTC): 2026-04-05T10:36:09.013340+00:00
+Run started (UTC): 2026-04-05T11:40:12.229081+00:00
 ========================================================================
-[PASS] test_module_b_failure_simulation.TestModuleBFailureSimulation.test_failure_does_not_mark_upload_session_downloaded (4.828 ms)
-[PASS] test_module_b_failure_simulation.TestModuleBFailureSimulation.test_failure_injection_stages_roll_back_without_partial_data (12.515 ms)
-[PASS] test_module_b_failure_simulation.TestModuleBFailureSimulation.test_injected_failure_followed_by_successful_retry (5.488 ms)
-[PASS] test_module_b_failure_simulation.TestModuleBFailureSimulation.test_injected_failure_rolls_back_token_and_download_log (4.556 ms)
-[PASS] test_module_b_failure_simulation.TestModuleBFailureSimulation.test_retry_after_each_failure_stage_succeeds_without_partial_residue (20.183 ms)
+[PASS] test_module_b_failure_simulation.TestModuleBFailureSimulation.test_failure_does_not_mark_upload_session_downloaded (4.840 ms)
+[PASS] test_module_b_failure_simulation.TestModuleBFailureSimulation.test_failure_injection_stages_roll_back_without_partial_data (14.977 ms)
+[PASS] test_module_b_failure_simulation.TestModuleBFailureSimulation.test_injected_failure_followed_by_successful_retry (5.715 ms)
+[PASS] test_module_b_failure_simulation.TestModuleBFailureSimulation.test_injected_failure_rolls_back_token_and_download_log (4.759 ms)
+[PASS] test_module_b_failure_simulation.TestModuleBFailureSimulation.test_retry_after_each_failure_stage_succeeds_without_partial_residue (23.256 ms)
 
 ========================================================================
 Run summary
@@ -13,4 +13,4 @@ Total: 5
 PASS: 5
 FAIL: 0
 ERROR: 0
-Elapsed seconds: 0.0506
+Elapsed seconds: 0.0575
