@@ -1,6 +1,5 @@
-# pyright: reportMissingImports=false
-
 import secrets
+import os
 import sys
 import time
 import unittest
@@ -11,7 +10,13 @@ TESTS_ROOT = Path(__file__).resolve().parent
 MODULE_B_ROOT = TESTS_ROOT.parent
 RESULTS_ROOT = MODULE_B_ROOT / "test_results"
 BACKEND_ROOT = MODULE_B_ROOT / "db_management_system"
-DB_PATH = BACKEND_ROOT / "module_b.sqlite3"
+TEST_RUNTIME_DB_PATH = RESULTS_ROOT / "module_b_test_runtime.sqlite3"
+
+# Keep test mutations in a dedicated sqlite file rather than the main runtime database.
+os.environ.setdefault("BLINDDROP_DB_PATH", str(TEST_RUNTIME_DB_PATH))
+DB_PATH = Path(os.environ["BLINDDROP_DB_PATH"]).expanduser()
+if not DB_PATH.is_absolute():
+    DB_PATH = (MODULE_B_ROOT / DB_PATH).resolve()
 
 if str(BACKEND_ROOT) not in sys.path:
     sys.path.insert(0, str(BACKEND_ROOT))

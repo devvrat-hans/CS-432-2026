@@ -1,6 +1,7 @@
 import hashlib
 import json
 import logging
+import os
 import secrets
 import sqlite3
 import time
@@ -13,7 +14,11 @@ from graphviz import Digraph
 
 api = Blueprint("api", __name__)
 
-DB_PATH = Path(__file__).resolve().parent.parent / "module_b.sqlite3"
+DEFAULT_DB_PATH = Path(__file__).resolve().parent.parent / "module_b.sqlite3"
+DB_PATH = Path(os.environ.get("BLINDDROP_DB_PATH", str(DEFAULT_DB_PATH))).expanduser()
+if not DB_PATH.is_absolute():
+    DB_PATH = (Path(__file__).resolve().parent.parent / DB_PATH).resolve()
+DB_PATH.parent.mkdir(parents=True, exist_ok=True)
 CORE_SCHEMA_PATH = Path(__file__).resolve().parent.parent / "sql" / "schema_core_tables.sql"
 PROJECT_SCHEMA_PATH = Path(__file__).resolve().parent.parent / "sql" / "schema_project_tables.sql"
 INDEXES_PATH = Path(__file__).resolve().parent.parent / "sql" / "indexes.sql"

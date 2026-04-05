@@ -1,3 +1,5 @@
+# pyright: reportMissingImports=false
+
 import concurrent.futures
 import random
 import secrets
