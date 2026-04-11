@@ -2,6 +2,13 @@
 
 Repository for CS-432 (Databases), Semester II 2025-2026, IIT Gandhinagar.
 
+## Live Demo
+
+- **Frontend**: https://blinddrop.vercel.app/
+- **Backend**: https://devvrat-hans-blinddrop.hf.space
+
+> **Note:** IITGN SSO/campus network may block external services. Use a personal network for the best experience.
+
 ## Project: Blind Drop
 
 A privacy-focused file transfer portal. Upload a file, receive a one-time 6-character download code, and the file is permanently deleted after download. No login, no trace, no account required.
