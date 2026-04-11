@@ -1,9 +1,41 @@
-.github/
+# OS
 .DS_Store
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+*.egg-info/
+
+# Node / Frontend
 node_modules/
 .next/
-venv/
-__pycache__/
-*.ipynb_checkpoints/
+bun.lock
+
+# Databases (generated at runtime)
+*.sqlite3
+*.db
+
+# IDE
+.vscode/
+.idea/
+
+# Environment
 .env
-module_b.sqlite3
+
+# Jupyter
+*.ipynb_checkpoints/
+
+# Test artifacts
+.pytest_cache/
+test_results/
+
+# Upload temp storage
+uploads/*
+!uploads/.gitkeep
+
+# Build
+dist/
+build/

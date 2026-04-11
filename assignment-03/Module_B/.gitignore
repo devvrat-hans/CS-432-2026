@@ -1,8 +1,12 @@
 # Python
 __pycache__/
 *.pyc
+*.pyo
 .venv/
 venv/
+
+# Test artifacts
+.pytest_cache/
 
 # Local runtime artifacts
 *.sqlite3
@@ -11,7 +15,18 @@ venv/
 # Frontend
 frontend/node_modules/
 frontend/.next/
+frontend/bun.lock
 
 # Environment files
 frontend/.env
 !frontend/.env.example
+
+# Uploaded files (temporary storage)
+db_management_system/uploads/*
+!db_management_system/uploads/.gitkeep
+
+# Logs (generated at runtime)
+db_management_system/logs/*.log
+
+# OS
+.DS_Store

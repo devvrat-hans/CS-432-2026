@@ -7,6 +7,7 @@ venv/
 
 # Test artifacts
 .pytest_cache/
+test_results/*.sqlite3
 
 # Local runtime artifacts
 *.sqlite3
@@ -27,6 +28,3 @@ db_management_system/uploads/*
 
 # Logs (generated at runtime)
 db_management_system/logs/*.log
-
-# OS
-.DS_Store
