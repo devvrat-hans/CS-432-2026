@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """Run ordered Module B stress phases with reliability safeguards."""
 
 from __future__ import annotations

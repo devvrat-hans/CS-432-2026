@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """Migrate existing data from module_b.sqlite3 into the 3 shard databases.
 
 Usage:

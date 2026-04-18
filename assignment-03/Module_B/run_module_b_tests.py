@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """Run Module B backend tests with optional stress orchestrator integration."""
 
 import argparse
