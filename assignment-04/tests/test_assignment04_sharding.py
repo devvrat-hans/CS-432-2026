@@ -50,9 +50,7 @@ class TestAssignment04Sharding(unittest.TestCase):
         migrate()
     """Sharding validation test suite."""
 
-    # ------------------------------------------------------------------
     # helpers
-    # ------------------------------------------------------------------
 
     def _headers(self, token):
         return {"Authorization": f"Bearer {token}"}
@@ -74,9 +72,7 @@ class TestAssignment04Sharding(unittest.TestCase):
     def _shard_manager(self):
         return ShardManager()
 
-    # ------------------------------------------------------------------
     # 1. Migration correctness — each record exists in exactly one shard
-    # ------------------------------------------------------------------
 
     def test_01_migration_records_in_exactly_one_shard(self):
         """Each record in every sharded table must appear in exactly one shard."""
@@ -108,9 +104,7 @@ class TestAssignment04Sharding(unittest.TestCase):
         finally:
             sm.close_all()
 
-    # ------------------------------------------------------------------
     # 2. Single-key lookup routes to correct shard
-    # ------------------------------------------------------------------
 
     def test_02_single_key_routes_to_correct_shard(self):
         """get_shard_id must hash consistently and route lookups correctly."""
@@ -132,9 +126,7 @@ class TestAssignment04Sharding(unittest.TestCase):
         finally:
             sm.close_all()
 
-    # ------------------------------------------------------------------
     # 3. API insert routes to correct shard
-    # ------------------------------------------------------------------
 
     def test_03_api_insert_routes_to_correct_shard(self):
         """Creating a token fixture via API must place records in the correct shard."""
@@ -168,9 +160,7 @@ class TestAssignment04Sharding(unittest.TestCase):
         finally:
             sm.close_all()
 
-    # ------------------------------------------------------------------
     # 4. Range queries return complete results from all shards
-    # ------------------------------------------------------------------
 
     def test_04_range_query_returns_all_shards(self):
         """A range query on a sharded table must aggregate across all shards."""
@@ -201,9 +191,7 @@ class TestAssignment04Sharding(unittest.TestCase):
         finally:
             sm.close_all()
 
-    # ------------------------------------------------------------------
     # 5. Token consume works on sharded data
-    # ------------------------------------------------------------------
 
     def test_05_token_consume_on_sharded_data(self):
         """Creating and consuming a token must work correctly across shards."""
@@ -241,9 +229,7 @@ class TestAssignment04Sharding(unittest.TestCase):
                 "Re-consuming an already used token should fail",
             )
 
-    # ------------------------------------------------------------------
     # 6. Shard verification endpoint returns all-pass
-    # ------------------------------------------------------------------
 
     def test_06_verification_endpoint_all_pass(self):
         """GET /api/sharding/verify must return all_pass=true."""
@@ -254,9 +240,7 @@ class TestAssignment04Sharding(unittest.TestCase):
         body = res.get_json()
         self.assertEqual(body.get("overall"), "pass", f"Verification failed: {body}")
 
-    # ------------------------------------------------------------------
     # 7. Dashboard counts match across shards
-    # ------------------------------------------------------------------
 
     def test_07_dashboard_counts_match_shards(self):
         """Dashboard summary shard counts should match scatter-gather totals."""
@@ -286,9 +270,7 @@ class TestAssignment04Sharding(unittest.TestCase):
         finally:
             sm.close_all()
 
-    # ------------------------------------------------------------------
     # 8. Sharding info endpoint returns valid data
-    # ------------------------------------------------------------------
 
     def test_08_sharding_info_endpoint(self):
         """GET /api/sharding/info returns correct shard config."""
@@ -304,9 +286,7 @@ class TestAssignment04Sharding(unittest.TestCase):
         for table in SHARDED_TABLES:
             self.assertIn(table, body["per_table_counts"])
 
-    # ------------------------------------------------------------------
     # 9. is_sharded_table correctly classifies tables
-    # ------------------------------------------------------------------
 
     def test_09_is_sharded_table_classification(self):
         """is_sharded_table must return True for sharded, False for others."""
@@ -315,9 +295,7 @@ class TestAssignment04Sharding(unittest.TestCase):
         for table in ["Member", "Device", "ExpiryPolicy", "SystemAdmin"]:
             self.assertFalse(is_sharded_table(table), f"{table} should NOT be sharded")
 
-    # ------------------------------------------------------------------
     # 10. get_shard_id is deterministic
-    # ------------------------------------------------------------------
 
     def test_10_shard_id_deterministic(self):
         """Same sessionID must always map to the same shard."""

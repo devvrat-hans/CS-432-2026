@@ -44,9 +44,7 @@ class TestBlindDropExpiry(unittest.TestCase):
         conn.commit()
         conn.close()
 
-    # ------------------------------------------------------------------
     # helpers
-    # ------------------------------------------------------------------
 
     def _upload_file(self, client, expires_in_minutes=30):
         data = {
@@ -107,9 +105,7 @@ class TestBlindDropExpiry(unittest.TestCase):
                 break
         sm.close_all()
 
-    # ------------------------------------------------------------------
     # test_01: cleanup marks expired sessions and deletes files
-    # ------------------------------------------------------------------
 
     def test_01_cleanup_marks_expired_and_deletes_file(self):
         with app.test_client() as client:
@@ -148,9 +144,7 @@ class TestBlindDropExpiry(unittest.TestCase):
                 break
         sm.close_all()
 
-    # ------------------------------------------------------------------
     # test_02: download expired code returns error
-    # ------------------------------------------------------------------
 
     def test_02_download_expired_code_fails(self):
         with app.test_client() as client:
@@ -166,9 +160,7 @@ class TestBlindDropExpiry(unittest.TestCase):
             resp = client.get(f"/api/public/download/{code}")
         self.assertIn(resp.status_code, [404, 410], resp.get_json(silent=True))
 
-    # ------------------------------------------------------------------
     # test_03: ErrorLog entries created for expired files
-    # ------------------------------------------------------------------
 
     def test_03_error_log_created_for_expiry(self):
         with app.test_client() as client:

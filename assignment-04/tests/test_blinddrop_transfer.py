@@ -51,9 +51,7 @@ class TestBlindDropTransfer(unittest.TestCase):
         conn.commit()
         conn.close()
 
-    # ------------------------------------------------------------------
     # helpers
-    # ------------------------------------------------------------------
 
     def _upload_file(self, client, content=None, filename=None, expires_in_minutes=30):
         """Upload a file and return (response, json_data)."""
@@ -70,9 +68,7 @@ class TestBlindDropTransfer(unittest.TestCase):
         )
         return resp, resp.get_json(silent=True)
 
-    # ------------------------------------------------------------------
     # test_01: upload returns 201 with download code
-    # ------------------------------------------------------------------
 
     def test_01_upload_returns_code(self):
         with app.test_client() as client:
@@ -86,9 +82,7 @@ class TestBlindDropTransfer(unittest.TestCase):
         self.assertEqual(data["file_name"], self.TEST_FILE_NAME)
         self.assertEqual(data["file_size"], len(self.TEST_FILE_CONTENT))
 
-    # ------------------------------------------------------------------
     # test_02: status check returns valid info
-    # ------------------------------------------------------------------
 
     def test_02_status_check_valid(self):
         with app.test_client() as client:
@@ -102,9 +96,7 @@ class TestBlindDropTransfer(unittest.TestCase):
         self.assertEqual(data["file_size"], len(self.TEST_FILE_CONTENT))
         self.assertIn("expires_at", data)
 
-    # ------------------------------------------------------------------
     # test_03: download returns correct file content
-    # ------------------------------------------------------------------
 
     def test_03_download_content_matches(self):
         with app.test_client() as client:
@@ -114,9 +106,7 @@ class TestBlindDropTransfer(unittest.TestCase):
         self.assertEqual(resp.status_code, 200)
         self.assertEqual(resp.data, self.TEST_FILE_CONTENT)
 
-    # ------------------------------------------------------------------
     # test_04: re-download same code fails (consumed)
-    # ------------------------------------------------------------------
 
     def test_04_redownload_fails(self):
         with app.test_client() as client:
@@ -129,9 +119,7 @@ class TestBlindDropTransfer(unittest.TestCase):
             resp2 = client.get(f"/api/public/download/{code}")
             self.assertIn(resp2.status_code, [404, 410])
 
-    # ------------------------------------------------------------------
     # test_05: physical file deleted after download
-    # ------------------------------------------------------------------
 
     def test_05_file_deleted_after_download(self):
         with app.test_client() as client:
@@ -167,9 +155,7 @@ class TestBlindDropTransfer(unittest.TestCase):
             # File should be deleted.
             self.assertFalse(Path(storage_path).exists(), "File should be deleted after download")
 
-    # ------------------------------------------------------------------
     # test_06: AuditTrail and DownloadLog entries created
-    # ------------------------------------------------------------------
 
     def test_06_audit_and_download_log_created(self):
         with app.test_client() as client:
@@ -211,9 +197,7 @@ class TestBlindDropTransfer(unittest.TestCase):
         self.assertTrue(found_download_log, "DownloadLog entry should exist after download")
         self.assertTrue(found_audit, "AuditTrail entry should exist after download")
 
-    # ------------------------------------------------------------------
     # test_07: oversized file returns 413
-    # ------------------------------------------------------------------
 
     def test_07_oversized_file_rejected(self):
         # Patch the MAX_FILE_SIZE in the routes module (where it's actually used)
@@ -232,9 +216,7 @@ class TestBlindDropTransfer(unittest.TestCase):
         finally:
             routes_mod.MAX_FILE_SIZE = original
 
-    # ------------------------------------------------------------------
     # test_08: rate limiting returns 429
-    # ------------------------------------------------------------------
 
     def test_08_rate_limit(self):
         # Temporarily lower the rate limit for testing.
