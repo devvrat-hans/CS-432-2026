@@ -106,7 +106,7 @@ The current SQLite-based design doesn't face network partitions (single machine)
 
 ## Verification
 
-### Sharding Tests (`test_module_b_sharding.py` — 10 tests)
+### Sharding Tests (`test_assignment04_sharding.py` — 10 tests)
 
 1. Migration correctness — each record exists in exactly one shard
 2. Single-key lookup routes to correct shard
@@ -128,7 +128,7 @@ The current SQLite-based design doesn't face network partitions (single machine)
 
 ```bash
 cd assignment-04
-python3 run_module_b_tests.py
+python3 run_assignment_04_tests.py
 ```
 
 ## Project Structure
@@ -147,12 +147,11 @@ assignment-04/
 │   └── requirements.txt
 ├── frontend/                     # Next.js frontend (demonstrates working app)
 ├── tests/
-│   ├── test_module_b_sharding.py # Shard integrity tests (10)
+│   ├── test_assignment04_sharding.py # Shard integrity tests (10)
 │   ├── test_blinddrop_transfer.py # End-to-end transfer tests (8)
-│   ├── test_blinddrop_expiry.py  # Expiry tests (3)
-│   └── test_module_b_base.py     # Base CRUD tests
+│   └── test_blinddrop_expiry.py  # Expiry tests (3)
 ├── test_results/
-├── run_module_b_tests.py         # Test runner
+├── run_assignment_04_tests.py    # Test runner
 ├── README.md
 └── links.md
 ```

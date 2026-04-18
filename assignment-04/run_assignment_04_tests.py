@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
-"""Run Module B backend tests with optional stress orchestrator integration."""
+"""Run Assignment 04 backend tests with optional stress orchestrator integration."""
 
 import argparse
+from datetime import datetime, timezone
 from pathlib import Path
 import sys
 import unittest
@@ -11,16 +12,18 @@ try:
 except ModuleNotFoundError:
     run_stress_orchestrator_main = None
 
-MODULE_B_DIR = Path(__file__).resolve().parent
-TESTS_DIR = MODULE_B_DIR / "tests"
-BACKEND_DIR = MODULE_B_DIR / "db_management_system"
-REPO_ROOT = MODULE_B_DIR.parent.parent
+ASSIGNMENT_DIR = Path(__file__).resolve().parent
+TESTS_DIR = ASSIGNMENT_DIR / "tests"
+BACKEND_DIR = ASSIGNMENT_DIR / "db_management_system"
+RESULTS_DIR = ASSIGNMENT_DIR / "test_results"
+SHARDING_RESULTS_PATH = RESULTS_DIR / "test_results_sharding.txt"
+REPO_ROOT = ASSIGNMENT_DIR.parent.parent
 
-# Support running this script from either repo root or Module_B directory.
+# Support running this script from either repo root or assignment-04 directory.
 if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
-if str(MODULE_B_DIR) not in sys.path:
-    sys.path.insert(0, str(MODULE_B_DIR))
+if str(ASSIGNMENT_DIR) not in sys.path:
+    sys.path.insert(0, str(ASSIGNMENT_DIR))
 if str(TESTS_DIR) not in sys.path:
     sys.path.insert(0, str(TESTS_DIR))
 if str(BACKEND_DIR) not in sys.path:
@@ -29,13 +32,45 @@ if str(BACKEND_DIR) not in sys.path:
 UPLOADS_DIR = BACKEND_DIR / "uploads"
 
 TEST_MODULES = [
-    "test_module_b_sharding",
+    "test_assignment04_sharding",
 ]
 
 TRANSFER_TEST_MODULES = [
     "test_blinddrop_transfer",
     "test_blinddrop_expiry",
 ]
+
+SHARDING_MODULE_NAME = "test_assignment04_sharding"
+
+
+class RecordingTextTestResult(unittest.TextTestResult):
+    """TextTestResult that tracks status by test id for reporting files."""
+
+    def __init__(self, stream, descriptions, verbosity):
+        super().__init__(stream, descriptions, verbosity)
+        self.test_statuses: list[tuple[str, str, str]] = []
+
+    def addSuccess(self, test):
+        super().addSuccess(test)
+        self.test_statuses.append((test.id(), "PASS", ""))
+
+    def addFailure(self, test, err):
+        super().addFailure(test, err)
+        self.test_statuses.append((test.id(), "FAIL", self._exc_info_to_string(err, test)))
+
+    def addError(self, test, err):
+        super().addError(test, err)
+        self.test_statuses.append((test.id(), "ERROR", self._exc_info_to_string(err, test)))
+
+    def addSkip(self, test, reason):
+        super().addSkip(test, reason)
+        self.test_statuses.append((test.id(), "SKIP", reason))
+
+
+class RecordingTextTestRunner(unittest.TextTestRunner):
+    """TextTestRunner that uses RecordingTextTestResult."""
+
+    resultclass = RecordingTextTestResult
 
 
 def _clean_uploads_dir():
@@ -48,7 +83,6 @@ def _clean_uploads_dir():
 
 def build_suite(
     *,
-    include_stress_module: bool,
     include_sharding: bool = True,
     include_transfer: bool = True,
 ) -> unittest.TestSuite:
@@ -56,10 +90,8 @@ def build_suite(
     suite = unittest.TestSuite()
 
     selected_modules = TEST_MODULES
-    if not include_stress_module:
-        selected_modules = [name for name in selected_modules if name != "test_module_b_stress"]
     if not include_sharding:
-        selected_modules = [name for name in selected_modules if name != "test_module_b_sharding"]
+        selected_modules = [name for name in selected_modules if name != "test_assignment04_sharding"]
 
     for module_name in selected_modules:
         suite.addTests(loader.loadTestsFromName(module_name))
@@ -89,18 +121,13 @@ def _run_shard_migration() -> bool:
 
 
 def parse_args(argv: list[str]) -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description="Run Module B backend tests")
+    parser = argparse.ArgumentParser(description="Run Assignment 04 backend tests")
     parser.add_argument(
         "--verbosity",
         type=int,
         default=2,
         choices=[1, 2],
         help="unittest verbosity level for the main suite.",
-    )
-    parser.add_argument(
-        "--skip-stress-module",
-        action="store_true",
-        help="Skip the test_module_b_stress unittest module in the main suite.",
     )
     parser.add_argument(
         "--skip-sharding",
@@ -149,6 +176,66 @@ def _print_summary(*, title: str, total: int, passed: int, failures: int, errors
     print("=" * 72)
 
 
+def _write_sharding_results_file(result: RecordingTextTestResult, *, include_sharding: bool) -> None:
+    """Persist sharding test outcomes to assignment-04/test_results/test_results_sharding.txt."""
+    RESULTS_DIR.mkdir(parents=True, exist_ok=True)
+    started_at = datetime.now(timezone.utc).isoformat()
+
+    sharding_entries = [
+        (test_id, status, details)
+        for test_id, status, details in result.test_statuses
+        if SHARDING_MODULE_NAME in test_id
+    ]
+
+    counts = {
+        "PASS": sum(1 for _, status, _ in sharding_entries if status == "PASS"),
+        "FAIL": sum(1 for _, status, _ in sharding_entries if status == "FAIL"),
+        "ERROR": sum(1 for _, status, _ in sharding_entries if status == "ERROR"),
+        "SKIP": sum(1 for _, status, _ in sharding_entries if status == "SKIP"),
+    }
+
+    lines = [
+        "TestAssignment04Sharding Results",
+        f"Run started (UTC): {started_at}",
+        "=" * 72,
+        "",
+    ]
+
+    if not include_sharding:
+        lines.extend([
+            "Sharding tests were skipped (--skip-sharding).",
+            "",
+        ])
+    elif not sharding_entries:
+        lines.extend([
+            "No sharding test results were captured in this run.",
+            "",
+        ])
+    else:
+        for test_id, status, details in sharding_entries:
+            lines.append(f"[{status}] {test_id}")
+            if details and status in {"FAIL", "ERROR"}:
+                lines.append("Traceback:")
+                lines.append(details.rstrip())
+                lines.append("-" * 72)
+            elif details and status == "SKIP":
+                lines.append(f"Reason: {details}")
+            lines.append("")
+
+    total = len(sharding_entries)
+    lines.extend([
+        "=" * 72,
+        "Run summary",
+        f"Total: {total}",
+        f"PASS: {counts['PASS']}",
+        f"FAIL: {counts['FAIL']}",
+        f"ERROR: {counts['ERROR']}",
+        f"SKIP: {counts['SKIP']}",
+    ])
+
+    SHARDING_RESULTS_PATH.write_text("\n".join(lines) + "\n", encoding="utf-8")
+
+
 def _run_integrated_stress_orchestrator(args: argparse.Namespace) -> int:
     if run_stress_orchestrator_main is None:
         print("\n[INTEGRATION] run_stress_orchestrator.py not found; skipping stress orchestrator integration")
@@ -179,12 +266,13 @@ def main(argv: list[str] | None = None) -> int:
         _clean_uploads_dir()
 
     suite = build_suite(
-        include_stress_module=not args.skip_stress_module,
         include_sharding=include_sharding,
         include_transfer=include_transfer,
     )
-    runner = unittest.TextTestRunner(verbosity=args.verbosity)
+    runner = RecordingTextTestRunner(verbosity=args.verbosity)
     result = runner.run(suite)
+
+    _write_sharding_results_file(result, include_sharding=include_sharding)
 
     total = result.testsRun
     failures = len(result.failures)
@@ -199,7 +287,7 @@ def main(argv: list[str] | None = None) -> int:
         _clean_uploads_dir()
 
     _print_summary(
-        title="Module B Backend Test Summary",
+        title="Assignment 04 Backend Test Summary",
         total=total,
         passed=passed,
         failures=failures,

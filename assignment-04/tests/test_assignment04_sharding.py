@@ -1,4 +1,4 @@
-"""Tests for the Module B sharding implementation.
+"""Tests for the Assignment 04 sharding implementation.
 
 Validates:
   1. Migration correctness — records exist in exactly one shard
@@ -19,9 +19,9 @@ import unittest
 from pathlib import Path
 
 TESTS_ROOT = Path(__file__).resolve().parent
-MODULE_B_ROOT = TESTS_ROOT.parent
-RESULTS_ROOT = MODULE_B_ROOT / "test_results"
-BACKEND_ROOT = MODULE_B_ROOT / "db_management_system"
+ASSIGNMENT_ROOT = TESTS_ROOT.parent
+RESULTS_ROOT = ASSIGNMENT_ROOT / "test_results"
+BACKEND_ROOT = ASSIGNMENT_ROOT / "db_management_system"
 
 # Test database path
 os.environ.setdefault("BLINDDROP_DB_PATH", str(RESULTS_ROOT / "module_b_test_runtime.sqlite3"))
@@ -42,7 +42,7 @@ from shard_router import (
 from migrate_to_shards import migrate
 
 
-class TestModuleBSharding(unittest.TestCase):
+class TestAssignment04Sharding(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):

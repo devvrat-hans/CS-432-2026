@@ -1,1 +1,1 @@
-"""Module B backend test package."""
+"""Assignment 04 backend test package."""

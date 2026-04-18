@@ -116,7 +116,7 @@ export default function LoginPage() {
           </form>
           
           <div className="flex justify-between items-center text-xs font-semibold text-neutral-500 tracking-wider">
-            <span>MODULE B</span>
+            <span>ASSIGNMENT 04</span>
             <span>SECURE ACCESS</span>
           </div>
         </div>

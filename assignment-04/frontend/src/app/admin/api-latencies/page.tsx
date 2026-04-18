@@ -83,7 +83,7 @@ export default function ApiLatenciesPage() {
             API LATENCIES
           </h1>
           <p className="text-xl text-neutral-500 max-w-3xl leading-relaxed mt-2 font-medium">
-            Live benchmark timings for key Module B APIs measured against local SQLite query paths.
+            Live benchmark timings for key Assignment 04 APIs measured against local SQLite query paths.
           </p>
         </div>
 
